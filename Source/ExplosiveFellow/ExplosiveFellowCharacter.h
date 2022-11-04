@@ -38,6 +38,8 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay")
 	TSubclassOf<class UGameplayEffect> DefaultAttributeEffect;
 
@@ -64,5 +66,7 @@ private:
 	/** Attribute set */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
 	UEFAbilitySystemComponent* AbilitySystemComponent;
+
+	FGameplayAbilitySpecHandle Handle;
 };
 

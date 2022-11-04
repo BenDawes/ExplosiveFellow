@@ -13,6 +13,7 @@
 #include "Engine/World.h"
 #include "EFAttributeSet.h"
 #include "EFGameplayAbility.h"
+#include "ExplosiveFellow.h"
 
 AExplosiveFellowCharacter::AExplosiveFellowCharacter()
 {
@@ -64,8 +65,6 @@ AExplosiveFellowCharacter::AExplosiveFellowCharacter()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	// Create an attribute set
 	AttributeSet = CreateDefaultSubobject<UEFAttributeSet>(TEXT("AttributeSet"));
-
-	SetupAbilitySystemInputBinds();
 }
 
 void AExplosiveFellowCharacter::Tick(float DeltaSeconds)
@@ -128,8 +127,10 @@ void AExplosiveFellowCharacter::InitializeAbilities()
 		{
 			// Initialize all abilities at level 1 for now
 			int32 EffectLevel = 1;
-			
-			AbilitySystemComponent->GiveAbility(
+			UE_LOG(LogTemp, Log, TEXT("Granting Ability"));
+
+			UE_LOG(LogTemp, Log, TEXT("Input ID %s"), *FString::FromInt(static_cast<int32>(DefaultAbility.GetDefaultObject()->AbilityInputID)));
+			Handle = AbilitySystemComponent->GiveAbility(
 				FGameplayAbilitySpec(DefaultAbility, EffectLevel, static_cast<int32>(DefaultAbility.GetDefaultObject()->AbilityInputID), this)
 			);
 		}
@@ -140,6 +141,7 @@ void AExplosiveFellowCharacter::SetupAbilitySystemInputBinds()
 {
 	if (AbilitySystemComponent && InputComponent)
 	{
+		UE_LOG(LogTemp, Log, TEXT("Binding"));
 		const FGameplayAbilityInputBinds Binds("Confirm", "Cancel", "EGASAbilityInputID", static_cast<int32>(EGASAbilityInputID::Confirm), static_cast<int32>(EGASAbilityInputID::Confirm));
 		AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, Binds);
 	}
@@ -147,6 +149,8 @@ void AExplosiveFellowCharacter::SetupAbilitySystemInputBinds()
 
 void AExplosiveFellowCharacter::PossessedBy(AController* NewController)
 {
+	UE_LOG(LogTemp, Log, TEXT("Possessed"));
+
 	// (Owner, Avatar)
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
@@ -161,5 +165,10 @@ void AExplosiveFellowCharacter::OnRep_PlayerState()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
 	InitializeAttributes();
+	SetupAbilitySystemInputBinds();
+}
+
+void AExplosiveFellowCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
 	SetupAbilitySystemInputBinds();
 }

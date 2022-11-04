@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffect.h"
 #include "GameFramework/Actor.h"
 #include "EFBomb.generated.h"
 
@@ -19,8 +20,40 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* StaticMesh;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
+	void StartFuse();
+
+	UFUNCTION(BlueprintCallable)
+	void SetFuseTime(float NewTime);
+	
+	UFUNCTION(BlueprintCallable)
+	void SetExplosionRadius(float NewRadius);
+
+	UFUNCTION(BlueprintCallable)
+	void SetBombDamageLevel(float NewDamageLevel);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnExplode();
+	virtual void OnExplode_Implementation();
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	float FuseTime = 1;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	float ExplosionRadius = 500;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	float BombDamageLevel = 1;
+
+private:
+	FTimerHandle FuseTimerHandle;
+
+	TSubclassOf<UGameplayEffect> DamageEffectClass;
 };
