@@ -12,6 +12,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "EFAttributeSet.h"
+#include "EFGameplayAbility.h"
 
 AExplosiveFellowCharacter::AExplosiveFellowCharacter()
 {
@@ -63,6 +64,8 @@ AExplosiveFellowCharacter::AExplosiveFellowCharacter()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	// Create an attribute set
 	AttributeSet = CreateDefaultSubobject<UEFAttributeSet>(TEXT("AttributeSet"));
+
+	SetupAbilitySystemInputBinds();
 }
 
 void AExplosiveFellowCharacter::Tick(float DeltaSeconds)
@@ -121,6 +124,42 @@ void AExplosiveFellowCharacter::InitializeAbilities()
 {
 	if (HasAuthority() && AbilitySystemComponent)
 	{
-
+		for (TSubclassOf<UEFGameplayAbility>& DefaultAbility : DefaultAbilities)
+		{
+			// Initialize all abilities at level 1 for now
+			int32 EffectLevel = 1;
+			
+			AbilitySystemComponent->GiveAbility(
+				FGameplayAbilitySpec(DefaultAbility, EffectLevel, static_cast<int32>(DefaultAbility.GetDefaultObject()->AbilityInputID), this)
+			);
+		}
 	}
+}
+
+void AExplosiveFellowCharacter::SetupAbilitySystemInputBinds()
+{
+	if (AbilitySystemComponent && InputComponent)
+	{
+		const FGameplayAbilityInputBinds Binds("Confirm", "Cancel", "EGASAbilityInputID", static_cast<int32>(EGASAbilityInputID::Confirm), static_cast<int32>(EGASAbilityInputID::Confirm));
+		AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, Binds);
+	}
+}
+
+void AExplosiveFellowCharacter::PossessedBy(AController* NewController)
+{
+	// (Owner, Avatar)
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+
+	InitializeAttributes();
+	InitializeAbilities();
+}
+
+void AExplosiveFellowCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+
+	InitializeAttributes();
+	SetupAbilitySystemInputBinds();
 }

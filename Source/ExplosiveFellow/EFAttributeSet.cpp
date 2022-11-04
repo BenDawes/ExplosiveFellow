@@ -20,3 +20,8 @@ void UEFAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UEFAttributeSet, Health, OldHealth);
 }
+
+void UEFAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UEFAttributeSet, Stamina, OldStamina);
+}

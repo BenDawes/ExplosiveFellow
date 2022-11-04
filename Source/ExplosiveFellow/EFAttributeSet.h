@@ -32,4 +32,11 @@ public:
 
 	UFUNCTION()
 	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", ReplicatedUsing = OnRep_Stamina)
+	FGameplayAttributeData Stamina;
+	ATTRIBUTE_ACCESSORS(UEFAttributeSet, Stamina);
+
+	UFUNCTION()
+	virtual void OnRep_Stamina(const FGameplayAttributeData& OldStamina);
 };

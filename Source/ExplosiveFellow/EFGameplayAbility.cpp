@@ -3,3 +3,4 @@
 
 #include "EFGameplayAbility.h"
 
+UEFGameplayAbility::UEFGameplayAbility() {}

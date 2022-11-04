@@ -33,9 +33,16 @@ public:
 
 	virtual void InitializeAttributes();
 	virtual void InitializeAbilities();
+	virtual void SetupAbilitySystemInputBinds();
+
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay")
 	TSubclassOf<class UGameplayEffect> DefaultAttributeEffect;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay")
+	TArray<TSubclassOf<class UEFGameplayAbility>> DefaultAbilities;
 
 private:
 	/** Top down camera */
