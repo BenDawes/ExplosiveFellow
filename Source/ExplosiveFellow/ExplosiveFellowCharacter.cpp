@@ -11,6 +11,7 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include "EFAttributeSet.h"
 
 AExplosiveFellowCharacter::AExplosiveFellowCharacter()
 {
@@ -55,6 +56,13 @@ AExplosiveFellowCharacter::AExplosiveFellowCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	// Create GAS component
+	AbilitySystemComponent = CreateDefaultSubobject<UEFAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+	// Create an attribute set
+	AttributeSet = CreateDefaultSubobject<UEFAttributeSet>(TEXT("AttributeSet"));
 }
 
 void AExplosiveFellowCharacter::Tick(float DeltaSeconds)
@@ -86,5 +94,33 @@ void AExplosiveFellowCharacter::Tick(float DeltaSeconds)
 			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
 			CursorToWorld->SetWorldRotation(CursorR);
 		}
+	}
+}
+
+void AExplosiveFellowCharacter::InitializeAttributes()
+{
+	if (AbilitySystemComponent && DefaultAttributeEffect) {
+		// Make handle with source
+
+		FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
+		
+		// Spec for effect, level 1 as default
+		FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributeEffect, 1, EffectContext);
+
+		if (!SpecHandle.IsValid())
+		{
+			return;
+		}
+
+		FActiveGameplayEffectHandle EffectHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	}
+}
+
+void AExplosiveFellowCharacter::InitializeAbilities()
+{
+	if (HasAuthority() && AbilitySystemComponent)
+	{
+
 	}
 }

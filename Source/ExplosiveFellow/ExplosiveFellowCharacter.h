@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "EFAttributeSet.h"
+#include "EFAbilitySystemComponent.h"
+#include "AbilitySystemInterface.h"
 #include "ExplosiveFellowCharacter.generated.h"
 
 UCLASS(Blueprintable)
-class AExplosiveFellowCharacter : public ACharacter
+class AExplosiveFellowCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -23,6 +26,16 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns CursorToWorld subobject **/
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
+	/** Attribute set */
+	FORCEINLINE class UEFAttributeSet* GetAttributeSet() { return AttributeSet; }
+	/** GAS Component */
+	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
+
+	virtual void InitializeAttributes();
+	virtual void InitializeAbilities();
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay")
+	TSubclassOf<class UGameplayEffect> DefaultAttributeEffect;
 
 private:
 	/** Top down camera */
@@ -36,5 +49,13 @@ private:
 	/** A decal that projects to the cursor location. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UDecalComponent* CursorToWorld;
+
+	/** Attribute set */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
+	UEFAttributeSet* AttributeSet;
+
+	/** Attribute set */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
+	UEFAbilitySystemComponent* AbilitySystemComponent;
 };
 
