@@ -39,6 +39,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetBombDamageLevel(float NewDamageLevel);
 
+	UFUNCTION(BlueprintCallable)
+	void SetIsPenetrating(bool NewIsPenetrating);
+
 	UFUNCTION(BlueprintNativeEvent)
 	void OnExplode();
 	virtual void OnExplode_Implementation();
@@ -51,6 +54,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float BombDamageLevel = 1;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	bool bIsPenetrating = false;
 
 private:
 	FTimerHandle FuseTimerHandle;
