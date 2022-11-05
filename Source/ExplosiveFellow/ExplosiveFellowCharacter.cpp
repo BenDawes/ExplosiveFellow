@@ -13,6 +13,7 @@
 #include "Engine/World.h"
 #include "EFAttributeSet.h"
 #include "EFGameplayAbility.h"
+#include "EFAbilitySystemComponent.h"
 #include "ExplosiveFellow.h"
 
 AExplosiveFellowCharacter::AExplosiveFellowCharacter()
@@ -171,4 +172,12 @@ void AExplosiveFellowCharacter::OnRep_PlayerState()
 void AExplosiveFellowCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	SetupAbilitySystemInputBinds();
+}
+
+void AExplosiveFellowCharacter::OnHealthChange(float NewHealth)
+{
+	if (NewHealth < 0.01f)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Player is invincible"));
+	}
 }

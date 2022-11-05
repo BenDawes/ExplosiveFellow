@@ -7,10 +7,11 @@
 #include "EFAttributeSet.h"
 #include "EFAbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
+#include "EFCustomHealthReactionInterface.h"
 #include "ExplosiveFellowCharacter.generated.h"
 
 UCLASS(Blueprintable)
-class AExplosiveFellowCharacter : public ACharacter, public IAbilitySystemInterface
+class AExplosiveFellowCharacter : public ACharacter, public IAbilitySystemInterface, public IEFCustomHealthReactionInterface
 {
 	GENERATED_BODY()
 
@@ -46,6 +47,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gameplay")
 	TArray<TSubclassOf<class UEFGameplayAbility>> DefaultAbilities;
 
+	// Custom attribute functions
+	virtual void OnHealthChange(float NewHealth) override;
+
 private:
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -63,7 +67,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
 	UEFAttributeSet* AttributeSet;
 
-	/** Attribute set */
+	/** ASC */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
 	UEFAbilitySystemComponent* AbilitySystemComponent;
 

@@ -92,9 +92,12 @@ void AEFBomb::OnExplode_Implementation()
 			FHitResult OutHit;
 
 			FCollisionObjectQueryParams ObjectQueryParams;
+			ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Destructible);
 			ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
 			ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
-			if (!World->LineTraceSingleByObjectType(OutHit, BombSource, PotentiallyAffectedActor->GetActorLocation(), ObjectQueryParams)) {
+			bool HadHit = World->LineTraceSingleByObjectType(OutHit, BombSource, PotentiallyAffectedActor->GetActorLocation(), ObjectQueryParams);
+			if (!HadHit || OutHit.Actor == PotentiallyAffectedActor) 
+			{
 				IAbilitySystemInterface* AsAbilitySystemInterface = Cast<IAbilitySystemInterface>(PotentiallyAffectedActor);
 				UAbilitySystemComponent* AbilitySystemComponent = AsAbilitySystemInterface->GetAbilitySystemComponent();
 				FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
