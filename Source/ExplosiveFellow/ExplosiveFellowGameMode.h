@@ -13,6 +13,10 @@ class AExplosiveFellowGameMode : public AGameModeBase
 
 public:
 	AExplosiveFellowGameMode();
+
+	// TODO ChoosePlayerStart currently picks a random unoccupied start. Is that sufficient? If not, override.
+	
+	// void HandleStartingNewPlayer(APlayerController* NewPlayer);
 };
 
 

@@ -17,9 +17,19 @@ class AExplosiveFellowCharacter : public ACharacter, public IAbilitySystemInterf
 
 public:
 	AExplosiveFellowCharacter();
+	/* The speed our ship moves around the level */
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+	float MoveSpeed = 700;
+	// Static names for axis bindings
+	static const FName MoveForwardBinding;
+	static const FName MoveRightBinding;
 
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
+	virtual void BeginPlay() override;
 
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
@@ -34,7 +44,7 @@ public:
 
 	virtual void InitializeAttributes();
 	virtual void InitializeAbilities();
-	virtual void SetupAbilitySystemInputBinds();
+	virtual void SetupAbilitySystemInputBinds(UInputComponent* PlayerInputComponent);
 
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
@@ -49,6 +59,7 @@ public:
 
 	// Custom attribute functions
 	virtual void OnHealthChange(float NewHealth) override;
+
 
 private:
 	/** Top down camera */
@@ -68,9 +79,10 @@ private:
 	UEFAttributeSet* AttributeSet;
 
 	/** ASC */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"), replicated)
 	UEFAbilitySystemComponent* AbilitySystemComponent;
 
 	FGameplayAbilitySpecHandle Handle;
+
 };
 

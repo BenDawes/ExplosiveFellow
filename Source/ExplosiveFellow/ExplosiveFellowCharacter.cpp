@@ -14,10 +14,20 @@
 #include "EFAttributeSet.h"
 #include "EFGameplayAbility.h"
 #include "EFAbilitySystemComponent.h"
+#include "GameFramework/PlayerState.h"
+#include "Net/UnrealNetwork.h"
 #include "ExplosiveFellow.h"
+
+const FName AExplosiveFellowCharacter::MoveForwardBinding("MoveForward");
+const FName AExplosiveFellowCharacter::MoveRightBinding("MoveRight");
 
 AExplosiveFellowCharacter::AExplosiveFellowCharacter()
 {
+
+	// Activate ticking in order to update the cursor every frame.
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -55,22 +65,33 @@ AExplosiveFellowCharacter::AExplosiveFellowCharacter()
 	}
 	CursorToWorld->DecalSize = FVector(16.0f, 32.0f, 32.0f);
 	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
-
-	// Activate ticking in order to update the cursor every frame.
-	PrimaryActorTick.bCanEverTick = true;
-	PrimaryActorTick.bStartWithTickEnabled = true;
-
 	// Create GAS component
 	AbilitySystemComponent = CreateDefaultSubobject<UEFAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 	// Create an attribute set
 	AttributeSet = CreateDefaultSubobject<UEFAttributeSet>(TEXT("AttributeSet"));
 }
 
+void AExplosiveFellowCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}
+
+void AExplosiveFellowCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (APlayerState* PS = GetPlayerState())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Updating player state frequency"));
+		PS->NetUpdateFrequency = 100;
+	}
+}
+
 void AExplosiveFellowCharacter::Tick(float DeltaSeconds)
 {
-    Super::Tick(DeltaSeconds);
+	Super::Tick(DeltaSeconds);
 
 	if (CursorToWorld != nullptr)
 	{
@@ -98,6 +119,30 @@ void AExplosiveFellowCharacter::Tick(float DeltaSeconds)
 			CursorToWorld->SetWorldRotation(CursorR);
 		}
 	}
+	// Find movement direction
+	const float ForwardValue = GetInputAxisValue(MoveForwardBinding);
+	const float RightValue = GetInputAxisValue(MoveRightBinding);
+
+	// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
+	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f);
+	AddMovementInput(MoveDirection, MoveSpeed * DeltaSeconds);
+	/*
+	if (AbilitySystemComponent->GetActivatableAbilities().Num() == 0) {
+		return;
+	}
+	TSharedPtr<FGameplayAbilityActorInfo> ActorInfo;
+	ActorInfo = AbilitySystemComponent->AbilityActorInfo;
+
+	if (!HasAuthority())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Can activate ability %s %s"), AbilitySystemComponent->GetActivatableAbilities()[0].Ability->CanActivateAbility(Handle, &(*ActorInfo)) ? TEXT(" yes ") : TEXT(" no "), HasAuthority() ? TEXT(" on server") : TEXT(" on client"));
+		// UE_LOG(LogTemp, Log, TEXT("Ability input ID, is pressed %s %s"), *FString::FromInt(AbilitySystemComponent->GetActivatableAbilities()[0].InputID), *FString::FromInt(AbilitySystemComponent->GetActivatableAbilities()[0].InputPressed));
+		AbilitySystemComponent->AbilityLocalInputPressed(AbilitySystemComponent->GetActivatableAbilities()[0].InputID);
+		//AbilitySystemComponent->TryActivateAbility(AbilitySystemComponent->GetActivatableAbilities()[0].Handle);
+		bool bValidInfo = (ActorInfo == nullptr || !ActorInfo->OwnerActor.IsValid() || !ActorInfo->AvatarActor.IsValid()) ;
+		UE_LOG(LogTemp, Log, TEXT("TryActivateAbility %s %s"), bValidInfo ? TEXT ("would return false") : TEXT("would continue"), HasAuthority() ? TEXT(" on server") : TEXT(" on client"));
+	}
+	*/
 }
 
 void AExplosiveFellowCharacter::InitializeAttributes()
@@ -128,9 +173,7 @@ void AExplosiveFellowCharacter::InitializeAbilities()
 		{
 			// Initialize all abilities at level 1 for now
 			int32 EffectLevel = 1;
-			UE_LOG(LogTemp, Log, TEXT("Granting Ability"));
-
-			UE_LOG(LogTemp, Log, TEXT("Input ID %s"), *FString::FromInt(static_cast<int32>(DefaultAbility.GetDefaultObject()->AbilityInputID)));
+			UE_LOG(LogTemp, Log, TEXT("Granting Ability %s %s"), *FString::FromInt(static_cast<int32>(DefaultAbility.GetDefaultObject()->AbilityInputID)), HasAuthority() ? TEXT(" on server") : TEXT(" on client"));
 			Handle = AbilitySystemComponent->GiveAbility(
 				FGameplayAbilitySpec(DefaultAbility, EffectLevel, static_cast<int32>(DefaultAbility.GetDefaultObject()->AbilityInputID), this)
 			);
@@ -138,40 +181,49 @@ void AExplosiveFellowCharacter::InitializeAbilities()
 	}
 }
 
-void AExplosiveFellowCharacter::SetupAbilitySystemInputBinds()
+void AExplosiveFellowCharacter::SetupAbilitySystemInputBinds(UInputComponent* IC = nullptr)
 {
-	if (AbilitySystemComponent && InputComponent)
+	if (IC == nullptr) {
+		IC = InputComponent;
+	}
+	if (AbilitySystemComponent && IC)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Binding"));
+		UE_LOG(LogTemp, Log, TEXT("Character: Binding %s %s"), *GetActorLocation().ToString(), HasAuthority() ? TEXT(" on server") : TEXT(" on client"));
 		const FGameplayAbilityInputBinds Binds("Confirm", "Cancel", "EGASAbilityInputID", static_cast<int32>(EGASAbilityInputID::Confirm), static_cast<int32>(EGASAbilityInputID::Confirm));
-		AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, Binds);
+		AbilitySystemComponent->BindAbilityActivationToInputComponent(IC, Binds);
 	}
 }
 
 void AExplosiveFellowCharacter::PossessedBy(AController* NewController)
 {
-	UE_LOG(LogTemp, Log, TEXT("Possessed"));
+	Super::PossessedBy(NewController);
+	UE_LOG(LogTemp, Log, TEXT("Possessed %s"), *GetName());
 
 	// (Owner, Avatar)
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
+	SetOwner(NewController);
 	InitializeAttributes();
 	InitializeAbilities();
+
 }
 
 void AExplosiveFellowCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
 	InitializeAttributes();
-	SetupAbilitySystemInputBinds();
+	SetupAbilitySystemInputBinds(); 
 }
 
 void AExplosiveFellowCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	SetupAbilitySystemInputBinds();
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	// set up gameplay key bindings
+	PlayerInputComponent->BindAxis(MoveForwardBinding);
+	PlayerInputComponent->BindAxis(MoveRightBinding);
+	SetupAbilitySystemInputBinds(PlayerInputComponent);
 }
 
 void AExplosiveFellowCharacter::OnHealthChange(float NewHealth)

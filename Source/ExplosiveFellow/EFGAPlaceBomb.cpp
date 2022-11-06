@@ -5,17 +5,18 @@
 #include "EFBomb.h"
 
 
-UEFGAPlaceBomb::UEFGAPlaceBomb() {}
+UEFGAPlaceBomb::UEFGAPlaceBomb() {
+}
 
 void UEFGAPlaceBomb::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	UE_LOG(LogTemp, Log, TEXT("Spawning bomb"));
-	if ( UWorld* World = GetWorld())
+	if (!HasAuthorityOrPredictionKey(ActorInfo, &ActivationInfo))
 	{
-		if (!HasAuthorityOrPredictionKey(ActorInfo, &ActivationInfo))
-		{
-			return;
-		}
+		return;
+	}
+	UE_LOG(LogTemp, Log, TEXT("Spawning bomb"));
+	if (UWorld* World = GetWorld())
+	{
 		if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
 		{
 			EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -39,7 +40,7 @@ void UEFGAPlaceBomb::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 		AEFBomb* Bomb = World->SpawnActor<AEFBomb>(AEFBomb::StaticClass(), SpawnLocation, SpawnRotation, SpawnInfo);
 		Bomb->StartFuse();
 	}
-	EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
+	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 
 bool UEFGAPlaceBomb::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, OUT FGameplayTagContainer* OptionalRelevantTags) const

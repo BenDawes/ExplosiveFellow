@@ -49,7 +49,6 @@ void AEFBoxCPP::InitializeAttributes()
 
 void AEFBoxCPP::OnHealthChange(float NewHealth)
 {
-	UE_LOG(LogTemp, Log, TEXT("Custom box health called"));
 	if (NewHealth < 0.01f)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Destroying a box"));
