@@ -135,6 +135,8 @@ void AExplosiveFellowCharacter::Tick(float DeltaSeconds)
 
 	if (!HasAuthority())
 	{
+		UE_LOG(LogTemp, Log, TEXT("n abilities %s"), *FString::FromInt(AbilitySystemComponent->GetActivatableAbilities().Num()));
+		
 		UE_LOG(LogTemp, Log, TEXT("Can activate ability %s %s"), AbilitySystemComponent->GetActivatableAbilities()[0].Ability->CanActivateAbility(Handle, &(*ActorInfo)) ? TEXT(" yes ") : TEXT(" no "), HasAuthority() ? TEXT(" on server") : TEXT(" on client"));
 		// UE_LOG(LogTemp, Log, TEXT("Ability input ID, is pressed %s %s"), *FString::FromInt(AbilitySystemComponent->GetActivatableAbilities()[0].InputID), *FString::FromInt(AbilitySystemComponent->GetActivatableAbilities()[0].InputPressed));
 		AbilitySystemComponent->AbilityLocalInputPressed(AbilitySystemComponent->GetActivatableAbilities()[0].InputID);
@@ -142,7 +144,7 @@ void AExplosiveFellowCharacter::Tick(float DeltaSeconds)
 		bool bValidInfo = (ActorInfo == nullptr || !ActorInfo->OwnerActor.IsValid() || !ActorInfo->AvatarActor.IsValid()) ;
 		UE_LOG(LogTemp, Log, TEXT("TryActivateAbility %s %s"), bValidInfo ? TEXT ("would return false") : TEXT("would continue"), HasAuthority() ? TEXT(" on server") : TEXT(" on client"));
 	}
-	*/
+*/
 }
 
 void AExplosiveFellowCharacter::InitializeAttributes()
@@ -167,7 +169,7 @@ void AExplosiveFellowCharacter::InitializeAttributes()
 
 void AExplosiveFellowCharacter::InitializeAbilities()
 {
-	if (HasAuthority() && AbilitySystemComponent)
+	if (HasAuthority() && AbilitySystemComponent && !AbilitySystemComponent->AbilitiesHaveBeenInitialized())
 	{
 		for (TSubclassOf<UEFGameplayAbility>& DefaultAbility : DefaultAbilities)
 		{
@@ -178,6 +180,7 @@ void AExplosiveFellowCharacter::InitializeAbilities()
 				FGameplayAbilitySpec(DefaultAbility, EffectLevel, static_cast<int32>(DefaultAbility.GetDefaultObject()->AbilityInputID), this)
 			);
 		}
+		AbilitySystemComponent->SetAbilitiesHaveBeenInitialized(true);
 	}
 }
 
@@ -186,11 +189,12 @@ void AExplosiveFellowCharacter::SetupAbilitySystemInputBinds(UInputComponent* IC
 	if (IC == nullptr) {
 		IC = InputComponent;
 	}
-	if (AbilitySystemComponent && IC)
+	if (AbilitySystemComponent && IC && !AbilitySystemComponent->AbilitiesHaveBeenBound())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character: Binding %s %s"), *GetActorLocation().ToString(), HasAuthority() ? TEXT(" on server") : TEXT(" on client"));
 		const FGameplayAbilityInputBinds Binds("Confirm", "Cancel", "EGASAbilityInputID", static_cast<int32>(EGASAbilityInputID::Confirm), static_cast<int32>(EGASAbilityInputID::Confirm));
 		AbilitySystemComponent->BindAbilityActivationToInputComponent(IC, Binds);
+		AbilitySystemComponent->SetAbilitiesHaveBeenBound(true);
 	}
 }
 

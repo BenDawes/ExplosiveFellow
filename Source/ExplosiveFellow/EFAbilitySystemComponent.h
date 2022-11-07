@@ -14,4 +14,12 @@ class EXPLOSIVEFELLOW_API UEFAbilitySystemComponent : public UAbilitySystemCompo
 {
 	GENERATED_BODY()
 	
+public:
+	void SetAbilitiesHaveBeenInitialized(bool NewValue);
+	bool AbilitiesHaveBeenInitialized() { return bAbilitiesHaveBeenInitialized; }
+	void SetAbilitiesHaveBeenBound(bool NewValue);
+	bool AbilitiesHaveBeenBound() { return bAbilitiesHaveBeenBound; }
+private:
+	bool bAbilitiesHaveBeenInitialized = false;
+	bool bAbilitiesHaveBeenBound = false;
 };

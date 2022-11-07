@@ -17,7 +17,6 @@ public:
 	// TODO ChoosePlayerStart currently picks a random unoccupied start. Is that sufficient? If not, override.
 	
 	// void HandleStartingNewPlayer(APlayerController* NewPlayer);
+	void HandleStartingNewPlayer(APlayerController* NewPlayer);
 };
-
-
 
