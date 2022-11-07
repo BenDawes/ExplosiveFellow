@@ -60,6 +60,8 @@ public:
 	// Custom attribute functions
 	virtual void OnHealthChange(float NewHealth) override;
 
+	void SetIsAIControlled(bool NewValue);
+
 
 private:
 	/** Top down camera */
@@ -83,6 +85,8 @@ private:
 	UEFAbilitySystemComponent* AbilitySystemComponent;
 
 	FGameplayAbilitySpecHandle Handle;
+
+	bool bIsAIControlled = true;
 
 };
 

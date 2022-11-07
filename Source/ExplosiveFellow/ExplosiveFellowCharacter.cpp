@@ -16,6 +16,7 @@
 #include "EFAbilitySystemComponent.h"
 #include "GameFramework/PlayerState.h"
 #include "Net/UnrealNetwork.h"
+#include "EFAIControllerCPP.h"
 #include "ExplosiveFellow.h"
 
 const FName AExplosiveFellowCharacter::MoveForwardBinding("MoveForward");
@@ -126,6 +127,7 @@ void AExplosiveFellowCharacter::Tick(float DeltaSeconds)
 	// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
 	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f);
 	AddMovementInput(MoveDirection, MoveSpeed * DeltaSeconds);
+
 	/*
 	if (AbilitySystemComponent->GetActivatableAbilities().Num() == 0) {
 		return;
@@ -210,6 +212,14 @@ void AExplosiveFellowCharacter::PossessedBy(AController* NewController)
 	InitializeAttributes();
 	InitializeAbilities();
 
+	if (AEFAIControllerCPP* AsAI = Cast<AEFAIControllerCPP>(NewController))
+	{
+		SetIsAIControlled(true);
+	}
+	else
+	{
+		SetIsAIControlled(false);
+	}
 }
 
 void AExplosiveFellowCharacter::OnRep_PlayerState()
@@ -236,4 +246,9 @@ void AExplosiveFellowCharacter::OnHealthChange(float NewHealth)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Player is invincible"));
 	}
+}
+
+void AExplosiveFellowCharacter::SetIsAIControlled(bool NewValue)
+{
+	bIsAIControlled = NewValue;
 }

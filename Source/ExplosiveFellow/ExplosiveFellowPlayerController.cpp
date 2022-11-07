@@ -27,4 +27,5 @@ void AExplosiveFellowPlayerController::AcknowledgePossession(APawn* NewPawn)
 	UE_LOG(LogTemp, Log, TEXT("was char"));
 
 	AbilitySystemComponent->InitAbilityActorInfo(ControlledCharacter, ControlledCharacter);
+	ControlledCharacter->SetIsAIControlled(false);
 }
