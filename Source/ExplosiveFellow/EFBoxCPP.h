@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "EFAttributeSet.h"
 #include "EFAbilitySystemComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "EFCustomHealthReactionInterface.h"
 #include "EFBoxCPP.generated.h"
 
@@ -39,7 +40,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	virtual void PostInitializeComponents() override;
 private:
 
 	/** Attribute set */
@@ -50,5 +51,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
 	UEFAbilitySystemComponent* AbilitySystemComponent;
 
+	/** AI */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
+	UAIPerceptionStimuliSourceComponent* BoxStimulusSource;
 
 };

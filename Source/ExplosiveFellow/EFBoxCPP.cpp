@@ -4,6 +4,8 @@
 #include "EFBoxCPP.h"
 #include "EFAttributeSet.h"
 #include "EFAbilitySystemComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 
 // Sets default values
 AEFBoxCPP::AEFBoxCPP()
@@ -25,6 +27,16 @@ AEFBoxCPP::AEFBoxCPP()
 	// Create an attribute set
 	AttributeSet = CreateDefaultSubobject<UEFAttributeSet>(TEXT("AttributeSet"));
 
+	BoxStimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("AISense_BoxStimulusSource");
+	BoxStimulusSource->bAutoRegister = true;
+
+}
+
+void AEFBoxCPP::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	BoxStimulusSource->RegisterForSense(UAISense_Sight::StaticClass());
+	BoxStimulusSource->RegisterWithPerceptionSystem();
 }
 
 void AEFBoxCPP::InitializeAttributes()
@@ -51,7 +63,7 @@ void AEFBoxCPP::OnHealthChange(float NewHealth)
 {
 	if (NewHealth < 0.01f)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Destroying a box"));
+		// UE_LOG(LogTemp, Log, TEXT("Destroying a box"));
 		Destroy();
 	}
 }

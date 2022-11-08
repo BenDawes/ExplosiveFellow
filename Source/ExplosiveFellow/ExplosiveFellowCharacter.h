@@ -35,8 +35,6 @@ public:
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns CursorToWorld subobject **/
-	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 	/** Attribute set */
 	FORCEINLINE class UEFAttributeSet* GetAttributeSet() { return AttributeSet; }
 	/** GAS Component */
@@ -62,6 +60,8 @@ public:
 
 	void SetIsAIControlled(bool NewValue);
 
+	bool GetIsInsideBomb();
+
 
 private:
 	/** Top down camera */
@@ -72,10 +72,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
-	/** A decal that projects to the cursor location. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UDecalComponent* CursorToWorld;
-
 	/** Attribute set */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
 	UEFAttributeSet* AttributeSet;
@@ -84,9 +80,15 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"), replicated)
 	UEFAbilitySystemComponent* AbilitySystemComponent;
 
-	FGameplayAbilitySpecHandle Handle;
-
 	bool bIsAIControlled = true;
+	bool bIsInsideBomb = false;
+	int nBombsInside = 0;
+
+	UFUNCTION()
+	virtual void LocalOnActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	UFUNCTION()
+	virtual void LocalOnActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
 };
 

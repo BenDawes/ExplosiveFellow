@@ -14,7 +14,7 @@ void UEFGAPlaceBomb::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 	{
 		return;
 	}
-	UE_LOG(LogTemp, Log, TEXT("Spawning bomb"));
+	// UE_LOG(LogTemp, Log, TEXT("Spawning bomb"));
 	if (UWorld* World = GetWorld())
 	{
 		if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
@@ -45,6 +45,5 @@ void UEFGAPlaceBomb::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 
 bool UEFGAPlaceBomb::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, OUT FGameplayTagContainer* OptionalRelevantTags) const
 {
-	UE_LOG(LogTemp, Log, TEXT("Can activate?"));
 	return true;
 }

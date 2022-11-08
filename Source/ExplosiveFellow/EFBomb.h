@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameplayEffect.h"
 #include "GameFramework/Actor.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 #include "EFBomb.generated.h"
 
 UCLASS()
@@ -19,13 +21,23 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* StaticMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
+	class UCapsuleComponent* TriggerCapsule;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	bool HasExploded();
+
+	UFUNCTION(BlueprintCallable)
+	void BecomeSolid();
 
 	UFUNCTION(BlueprintCallable)
 	void StartFuse();
@@ -47,10 +59,10 @@ public:
 	virtual void OnExplode_Implementation();
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	float FuseTime = 1;
+	float FuseTime = 2.f;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	float ExplosionRadius = 500;
+	float ExplosionRadius = 200;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float BombDamageLevel = 1;
@@ -58,8 +70,21 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	bool bIsPenetrating = false;
 
+	/** AI */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
+	UAIPerceptionStimuliSourceComponent* BombStimulusSource;
+	
+	UFUNCTION()
+	virtual void LocalOnActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
 private:
 	FTimerHandle FuseTimerHandle;
 
+	bool bIsSolid = false;
+
+	bool bHasExploded = false;
+
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
+
+	static bool IsGASActor(AActor* Actor);
 };
