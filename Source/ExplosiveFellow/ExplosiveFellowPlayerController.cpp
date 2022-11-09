@@ -17,14 +17,12 @@ AExplosiveFellowPlayerController::AExplosiveFellowPlayerController()
 void AExplosiveFellowPlayerController::AcknowledgePossession(APawn* NewPawn)
 {
 	Super::AcknowledgePossession(NewPawn);
-	UE_LOG(LogTemp, Log, TEXT("acknowledging possession"));
 	AExplosiveFellowCharacter* ControlledCharacter = Cast<AExplosiveFellowCharacter>(GetPawn());
 	if (ControlledCharacter == nullptr)
 	{
 		return;
 	}
 	auto AbilitySystemComponent = ControlledCharacter->GetAbilitySystemComponent();
-	UE_LOG(LogTemp, Log, TEXT("was char"));
 
 	AbilitySystemComponent->InitAbilityActorInfo(ControlledCharacter, ControlledCharacter);
 	ControlledCharacter->SetIsAIControlled(false);

@@ -7,6 +7,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AIPerceptionTypes.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "ExplosiveFellowCharacter.h"
@@ -30,8 +31,6 @@ public:
 
 	UFUNCTION()
 	void OnPerceptionUpdated(const TArray<AActor*>& Actors);
-	UFUNCTION()
-	void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
 	class UBehaviorTree* AIBehavior;
@@ -39,6 +38,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
 	class UBlackboardComponent* AIBlackboard;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
+	UAISenseConfig_Sight* SightSenseConfig;
 private:
 	FName CanSeeBombKey = FName("CanSeeBomb");
 	FName DestructibleObstacleInWayKey = FName("DestructibleObstacleInWay");

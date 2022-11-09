@@ -76,7 +76,6 @@ void AExplosiveFellowCharacter::BeginPlay()
 
 	if (APlayerState* PS = GetPlayerState())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Updating player state frequency"));
 		PS->NetUpdateFrequency = 100;
 	}
 	OnActorBeginOverlap.AddDynamic(this, &AExplosiveFellowCharacter::LocalOnActorBeginOverlap);
@@ -124,7 +123,6 @@ void AExplosiveFellowCharacter::InitializeAbilities()
 		{
 			// Initialize all abilities at level 1 for now
 			int32 EffectLevel = 1;
-			UE_LOG(LogTemp, Log, TEXT("Granting Ability %s %s"), *FString::FromInt(static_cast<int32>(DefaultAbility.GetDefaultObject()->AbilityInputID)), HasAuthority() ? TEXT(" on server") : TEXT(" on client"));
 			AbilitySystemComponent->GiveAbility(
 				FGameplayAbilitySpec(DefaultAbility, EffectLevel, static_cast<int32>(DefaultAbility.GetDefaultObject()->AbilityInputID), this)
 			);
@@ -140,7 +138,6 @@ void AExplosiveFellowCharacter::SetupAbilitySystemInputBinds(UInputComponent* IC
 	}
 	if (AbilitySystemComponent && IC && !AbilitySystemComponent->AbilitiesHaveBeenBound())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Character: Binding %s %s"), *GetActorLocation().ToString(), HasAuthority() ? TEXT(" on server") : TEXT(" on client"));
 		const FGameplayAbilityInputBinds Binds("Confirm", "Cancel", "EGASAbilityInputID", static_cast<int32>(EGASAbilityInputID::Confirm), static_cast<int32>(EGASAbilityInputID::Confirm));
 		AbilitySystemComponent->BindAbilityActivationToInputComponent(IC, Binds);
 		AbilitySystemComponent->SetAbilitiesHaveBeenBound(true);
@@ -150,7 +147,6 @@ void AExplosiveFellowCharacter::SetupAbilitySystemInputBinds(UInputComponent* IC
 void AExplosiveFellowCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	UE_LOG(LogTemp, Log, TEXT("Possessed %s"), *GetName());
 
 	// (Owner, Avatar)
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
