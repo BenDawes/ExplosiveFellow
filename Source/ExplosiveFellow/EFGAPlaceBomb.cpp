@@ -39,11 +39,18 @@ void UEFGAPlaceBomb::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		AEFBomb* Bomb = World->SpawnActor<AEFBomb>(AEFBomb::StaticClass(), SpawnLocation, SpawnRotation, SpawnInfo);
 		Bomb->StartFuse();
+		nPlacedBombs += 1;
+		Bomb->OnExplodeDelegate.AddDynamic(this, &UEFGAPlaceBomb::OnBombExplode);
 	}
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 
+void UEFGAPlaceBomb::OnBombExplode()
+{
+	nPlacedBombs -= 1;
+}
+
 bool UEFGAPlaceBomb::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, OUT FGameplayTagContainer* OptionalRelevantTags) const
 {
-	return true;
+	return nPlacedBombs == 0;
 }

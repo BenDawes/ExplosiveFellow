@@ -9,6 +9,8 @@
 #include "Perception/AISense_Sight.h"
 #include "EFBomb.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExplodeDelegate);
+
 UCLASS()
 class EXPLOSIVEFELLOW_API AEFBomb : public AActor
 {
@@ -57,6 +59,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnExplode();
 	virtual void OnExplode_Implementation();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnExplodeDelegate OnExplodeDelegate;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float FuseTime = 2.f;

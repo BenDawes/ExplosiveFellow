@@ -71,7 +71,6 @@ void AEFBomb::BeginPlay()
 
 void AEFBomb::BecomeSolid()
 {
-	UE_LOG(LogTemp, Log, TEXT("Becoming solid"));
 	StaticMesh->SetCollisionProfileName(FName("BlockAll"));
 	StaticMesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 	StaticMesh->SetCanEverAffectNavigation(true);
@@ -166,13 +165,6 @@ void AEFBomb::OnExplode_Implementation()
 			}
 			else
 			{
-				UE_LOG(LogTemp, Log, TEXT("Testing target actor %s"), *PotentiallyAffectedActor->GetName());
-				UE_LOG(LogTemp, Log, TEXT("This actor is %s"), *GetName());
-				for (FHitResult Result : FilteredHits)
-				{
-					UE_LOG(LogTemp, Log, TEXT("Actor %s"), *Result.Actor->GetName());
-				}
-
 				auto ResultWasNotPawn = [](FHitResult Result) -> bool { return !Cast<APawn>(Result.Actor); };
 				FHitResult* FirstNonPlayerHit = FilteredHits.FindByPredicate(ResultWasNotPawn);
 				bool FirstNonPlayerHitWasThis = FirstNonPlayerHit != nullptr && FirstNonPlayerHit->Actor == PotentiallyAffectedActor;
@@ -180,10 +172,8 @@ void AEFBomb::OnExplode_Implementation()
 			}
 			if (!HadHit || PassedCollisionChecks)
 			{
-				UE_LOG(LogTemp, Log, TEXT("affected"));
 				DefinitelyAffectedActors.AddUnique(PotentiallyAffectedActor);
 			}
-			UE_LOG(LogTemp, Log, TEXT("unaffected"));
 		}
 
 		TArray<AActor*> AffectedActorsWithGASApplied;
@@ -220,6 +210,7 @@ void AEFBomb::OnExplode_Implementation()
 			OtherBomb->OnExplode();
 		}
 	}
+	OnExplodeDelegate.Broadcast();
 	Destroy();
 }
 

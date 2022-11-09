@@ -42,10 +42,13 @@ public:
 private:
 	FName CanSeeBombKey = FName("CanSeeBomb");
 	FName DestructibleObstacleInWayKey = FName("DestructibleObstacleInWay");
+	FName LastObservedBombExplodedKey = FName("HasLastObservedBombExploded");
 
 	AExplosiveFellowCharacter* PossessedCharacter;
 	
 	TArray<AActor*> DestructibleVisibleActors;
 
 	void UpdatePerception();
+	UFUNCTION()
+	void OnLastObservedBombExplode();
 };
