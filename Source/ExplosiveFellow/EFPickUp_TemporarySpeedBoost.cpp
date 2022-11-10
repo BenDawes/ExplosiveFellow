@@ -3,7 +3,6 @@
 
 #include "EFPickUp_TemporarySpeedBoost.h"
 
-
 AEFPickUp_TemporarySpeedBoost::AEFPickUp_TemporarySpeedBoost()
 {
 	static ConstructorHelpers::FClassFinder<UGameplayEffect> EffectClassFinder(TEXT("/Game/TopDownCPP/GAS/GE_SpeedBoost"));;
@@ -12,5 +11,5 @@ AEFPickUp_TemporarySpeedBoost::AEFPickUp_TemporarySpeedBoost()
 		EffectClass = EffectClassFinder.Class;
 	}
 	EffectAmountTagName = FName("EffectMagnitude.SpeedMultiplier");
-	Amount = 1.4f;
+	Amount = 5.f;
 }

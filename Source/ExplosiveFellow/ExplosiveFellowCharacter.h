@@ -41,8 +41,8 @@ public:
 	/** GAS Component */
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 
-
-
+	UFUNCTION()
+	virtual void OnActiveGameplayEffectAddedCallback(UAbilitySystemComponent* Target, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle);
 	virtual void InitializeAttributes();
 	virtual void InitializeAbilities();
 	virtual void SetupAbilitySystemInputBinds(UInputComponent* PlayerInputComponent);

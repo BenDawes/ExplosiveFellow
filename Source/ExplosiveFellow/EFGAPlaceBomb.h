@@ -29,5 +29,5 @@ private:
 	UFUNCTION()
 	void OnBombExplode();
 
-	// TSubclassOf<UEFGameplayAbility> NextBombPenetratesClass;
+	TSubclassOf<UEFGameplayAbility> NextBombPenetratesClass;
 };

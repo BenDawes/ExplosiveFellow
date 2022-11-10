@@ -61,6 +61,6 @@ public:
 	ATTRIBUTE_ACCESSORS(UEFAttributeSet, MaxSpeed);
 	UFUNCTION()
 	virtual void OnRep_MaxSpeed(const FGameplayAttributeData& OldMaxSpeed);
-
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 };

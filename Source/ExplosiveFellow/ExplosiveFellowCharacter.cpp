@@ -18,6 +18,7 @@
 #include "EFAbilitySystemComponent.h"
 #include "EFAIControllerCPP.h"
 #include "EFBomb.h"
+#include <GameplayEffectTypes.h>
 #include "ExplosiveFellow.h"
 
 const FName AExplosiveFellowCharacter::MoveForwardBinding("MoveForward");
@@ -80,6 +81,9 @@ void AExplosiveFellowCharacter::BeginPlay()
 	}
 	OnActorBeginOverlap.AddDynamic(this, &AExplosiveFellowCharacter::LocalOnActorBeginOverlap);
 	OnActorEndOverlap.AddDynamic(this, &AExplosiveFellowCharacter::LocalOnActorEndOverlap);
+
+	GetCharacterMovement()->MaxWalkSpeed = AttributeSet->GetMaxSpeed();
+	AbilitySystemComponent->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(this, &AExplosiveFellowCharacter::OnActiveGameplayEffectAddedCallback);
 }
 
 void AExplosiveFellowCharacter::Tick(float DeltaSeconds)
@@ -236,6 +240,30 @@ void AExplosiveFellowCharacter::LocalOnActorEndOverlap(AActor* OverlappedActor, 
 	{
 		nBombsInside = 0;
 		bIsInsideBomb = false;
+	}
+
+}
+
+void AExplosiveFellowCharacter::OnActiveGameplayEffectAddedCallback(UAbilitySystemComponent* Target, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle)
+{
+	auto LocalAttributeSet = AttributeSet;
+	auto SpeedModifier = SpecApplied.GetModifiedAttribute(LocalAttributeSet->GetMaxSpeedAttribute());
+	UGameplayEffect const* EffectDef = AbilitySystemComponent->GetGameplayEffectDefForHandle(ActiveHandle);
+	if (SpeedModifier != nullptr)
+	{
+		const FGameplayModifierInfo* EffectDefMetaData = EffectDef->Modifiers.FindByPredicate([LocalAttributeSet](FGameplayModifierInfo Info) -> bool { return Info.Attribute == LocalAttributeSet->GetMaxSpeedAttribute(); });
+		if (EffectDefMetaData->ModifierOp == EGameplayModOp::Additive)
+		{
+			GetCharacterMovement()->MaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed + SpeedModifier->TotalMagnitude;
+		}
+		else if (EffectDefMetaData->ModifierOp == EGameplayModOp::Multiplicitive)
+		{
+			GetCharacterMovement()->MaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed * SpeedModifier->TotalMagnitude;
+		}
+		else if (EffectDefMetaData->ModifierOp == EGameplayModOp::Override)
+		{
+			GetCharacterMovement()->MaxWalkSpeed = SpeedModifier->TotalMagnitude;
+		}
 	}
 
 }

@@ -161,7 +161,7 @@ void AEFBomb::OnExplode_Implementation()
 			if (bIsPenetrating)
 			{
 				bool AllHitsWereGASActors = !FilteredHits.ContainsByPredicate([](FHitResult Result) -> bool { return !AEFBomb::IsGASActor(&(*Result.Actor)); });
-				PassedCollisionChecks &= !AllHitsWereGASActors;
+				PassedCollisionChecks &= AllHitsWereGASActors;
 			}
 			else
 			{

@@ -13,11 +13,11 @@
 
 
 UEFGAPlaceBomb::UEFGAPlaceBomb() {
-	/*static ConstructorHelpers::FClassFinder<UEFGameplayAbility> NextBombPenetratesClassFinder(TEXT("/Game/TopDownCPP/GAS/GA_NextBombPenetrates"));;
+	static ConstructorHelpers::FClassFinder<UEFGameplayAbility> NextBombPenetratesClassFinder(TEXT("/Game/TopDownCPP/GAS/GA_NextBombPenetrates"));;
 	if (NextBombPenetratesClassFinder.Succeeded())
 	{
 		NextBombPenetratesClass = NextBombPenetratesClassFinder.Class;
-	}*/
+	}
 	AbilityInputID = EGASAbilityInputID::Primary;
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
@@ -28,21 +28,7 @@ void UEFGAPlaceBomb::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 	{
 		return;
 	}
-	/*TWeakObjectPtr<AActor> SpawningActor = ActorInfo->OwnerActor;
-	bool bNextBombPenetrates = false;
-	if (SpawningActor.IsValid())
-	{
-		if (AExplosiveFellowCharacter* AsCharacter = Cast<AExplosiveFellowCharacter>(SpawningActor.Get()))
-		{
-			TSubclassOf<UEFGameplayAbility> LocalNextBombPenetratesClass = NextBombPenetratesClass;
-			FGameplayAbilitySpec* NextBombPenetratesSpec = AsCharacter->GetAbilitySystemComponent()->GetActivatableAbilities().FindByPredicate([LocalNextBombPenetratesClass](FGameplayAbilitySpec Spec) -> bool { return Spec.Ability->GetClass() == LocalNextBombPenetratesClass->GetClass(); });
-			if (NextBombPenetratesSpec != nullptr)
-			{
-				bNextBombPenetrates = true;
-				AsCharacter->GetAbilitySystemComponent()->ClearAbility(NextBombPenetratesSpec->Handle);
-			}
-		}
-	}*/
+	TWeakObjectPtr<AActor> SpawningActor = ActorInfo->OwnerActor;
 	// UE_LOG(LogTemp, Log, TEXT("Spawning bomb"));
 	if (UWorld* World = GetWorld())
 	{
@@ -67,8 +53,35 @@ void UEFGAPlaceBomb::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 		FActorSpawnParameters SpawnInfo;
 		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		AEFBomb* Bomb = World->SpawnActor<AEFBomb>(AEFBomb::StaticClass(), SpawnLocation, SpawnRotation, SpawnInfo);
+		
 
-		// Bomb->SetIsPenetrating(false);
+		if (SpawningActor.IsValid())
+		{
+			AExplosiveFellowCharacter* AsCharacter = Cast<AExplosiveFellowCharacter>(SpawningActor.Get());
+			if (AsCharacter != nullptr)
+			{
+				TSubclassOf<UEFGameplayAbility> LocalNextBombPenetratesClass = NextBombPenetratesClass;
+				auto ASC = AsCharacter->GetAbilitySystemComponent();
+				auto Abilities = ASC->GetActivatableAbilities();
+				FGameplayAbilitySpec* NextBombPenetratesSpec = Abilities.FindByPredicate([LocalNextBombPenetratesClass](FGameplayAbilitySpec Spec) -> bool { return Spec.Ability->GetClass() == LocalNextBombPenetratesClass; });
+				if (NextBombPenetratesSpec != nullptr)
+				{
+					Bomb->SetIsPenetrating(true);
+					AsCharacter->GetAbilitySystemComponent()->ClearAbility(NextBombPenetratesSpec->Handle);
+				}
+
+				const UEFAttributeSet* AttributeSet = ASC->GetSet<UEFAttributeSet>();
+				if (AttributeSet != nullptr)
+				{
+					Bomb->SetExplosionRadius(
+						AttributeSet->GetBombSizeLevel() * 100
+					);
+					Bomb->SetBombDamageLevel(
+						AttributeSet->GetBombDamageLevel()
+					);
+				}
+			}
+		}
 		Bomb->StartFuse();
 		nPlacedBombs += 1;
 		Bomb->OnExplodeDelegate.AddDynamic(this, &UEFGAPlaceBomb::OnBombExplode);
@@ -83,7 +96,7 @@ void UEFGAPlaceBomb::OnBombExplode()
 
 bool UEFGAPlaceBomb::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, OUT FGameplayTagContainer* OptionalRelevantTags) const
 {
-	/*if (!ActorInfo->AbilitySystemComponent.IsValid())
+	if (!ActorInfo->AbilitySystemComponent.IsValid())
 	{
 		return nPlacedBombs == 0;
 	}
@@ -92,7 +105,7 @@ bool UEFGAPlaceBomb::CanActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	if (const UEFAttributeSet* AsPlayerSet = ASC->GetSet<UEFAttributeSet>())
 	{
 		return nPlacedBombs < AsPlayerSet->GetMaxBombs();
-	}*/
+	}
 
 	return nPlacedBombs == 0;
 }

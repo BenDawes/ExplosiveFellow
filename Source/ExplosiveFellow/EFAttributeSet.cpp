@@ -2,8 +2,10 @@
 
 
 #include "EFAttributeSet.h"
+#include "ExplosiveFellowCharacter.h"
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "EFCustomHealthReactionInterface.h"
 
@@ -52,6 +54,14 @@ void UEFAttributeSet::OnRep_BombSizeLevel(const FGameplayAttributeData& OldBombS
 void UEFAttributeSet::OnRep_MaxSpeed(const FGameplayAttributeData& OldMaxSpeed)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UEFAttributeSet, MaxSpeed, OldMaxSpeed);
+}
+
+void UEFAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	if (Attribute == GetHealthAttribute())
+	{
+		NewValue = FMath::Clamp<float>(NewValue, NewValue, 100);
+	}
 }
 
 void UEFAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)

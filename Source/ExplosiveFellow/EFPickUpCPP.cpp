@@ -52,7 +52,8 @@ void AEFPickUpCPP::Tick(float DeltaTime)
 
 void AEFPickUpCPP::LocalOnActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
-	if (AExplosiveFellowCharacter* AsCharacter = Cast<AExplosiveFellowCharacter>(OtherActor))
+	AExplosiveFellowCharacter* AsCharacter = Cast<AExplosiveFellowCharacter>(OtherActor);
+	if (AsCharacter != nullptr) 
 	{
 		OnPickUp(AsCharacter);
 	}

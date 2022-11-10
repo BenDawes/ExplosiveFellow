@@ -21,5 +21,6 @@ void AEFPickUp_NextBombPenetrates::OnPickUp(AExplosiveFellowCharacter* Receiving
 		ReceivingCharacter->GetAbilitySystemComponent()->GiveAbility(
 			FGameplayAbilitySpec(NextBombPenetratesAbility, 1, -1, this)
 		);
+		Destroy();
 	}
 }

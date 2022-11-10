@@ -10,6 +10,6 @@ AEFPickUp_IncreaseBombRadius::AEFPickUp_IncreaseBombRadius()
 	{
 		EffectClass = EffectClassFinder.Class;
 	}
-	EffectAmountTagName = FName("EffectMagnitude.DamageIncrease");
+	EffectAmountTagName = FName("EffectMagnitude.RadiusIncrease");
 	Amount = 1;
 }

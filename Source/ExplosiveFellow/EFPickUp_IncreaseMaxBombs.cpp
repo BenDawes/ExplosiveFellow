@@ -16,4 +16,5 @@ AEFPickUp_IncreaseMaxBombs::AEFPickUp_IncreaseMaxBombs()
 void AEFPickUp_IncreaseMaxBombs::OnPickUp(AExplosiveFellowCharacter* ReceivingCharacter)
 {
 	ApplyStandardEffect(ReceivingCharacter, false);
+	Destroy();
 }
