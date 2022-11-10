@@ -28,4 +28,6 @@ private:
 
 	UFUNCTION()
 	void OnBombExplode();
+
+	// TSubclassOf<UEFGameplayAbility> NextBombPenetratesClass;
 };

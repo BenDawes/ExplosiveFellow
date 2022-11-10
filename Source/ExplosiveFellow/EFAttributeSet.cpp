@@ -17,6 +17,11 @@ void UEFAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION_NOTIFY(UEFAttributeSet, Health, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UEFAttributeSet, Stamina, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UEFAttributeSet, MaxBombs, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UEFAttributeSet, BombDamageLevel, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UEFAttributeSet, BombSizeLevel, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UEFAttributeSet, MaxSpeed, COND_None, REPNOTIFY_Always);
 }
 
 void UEFAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
@@ -27,6 +32,26 @@ void UEFAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)
 void UEFAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UEFAttributeSet, Stamina, OldStamina);
+}
+
+void UEFAttributeSet::OnRep_MaxBombs(const FGameplayAttributeData& OldMaxBombs)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UEFAttributeSet, MaxBombs, OldMaxBombs);
+}
+
+void UEFAttributeSet::OnRep_BombDamageLevel(const FGameplayAttributeData& OldBombDamageLevel)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UEFAttributeSet, BombDamageLevel, OldBombDamageLevel);
+}
+
+void UEFAttributeSet::OnRep_BombSizeLevel(const FGameplayAttributeData& OldBombSizeLevel)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UEFAttributeSet, BombSizeLevel, OldBombSizeLevel);
+}
+
+void UEFAttributeSet::OnRep_MaxSpeed(const FGameplayAttributeData& OldMaxSpeed)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UEFAttributeSet, MaxSpeed, OldMaxSpeed);
 }
 
 void UEFAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
