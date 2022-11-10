@@ -187,7 +187,18 @@ void AExplosiveFellowCharacter::OnHealthChange(float NewHealth)
 {
 	if (NewHealth < 0.01f)
 	{
-		// UE_LOG(LogTemp, Log, TEXT("Player is invincible"));
+		if (bIsAIControlled)
+		{
+			Destroy();
+		}
+		else
+		{
+			if (OriginatingSpectatorPawn != nullptr)
+			{
+				GetController()->Possess(OriginatingSpectatorPawn);
+				Destroy();
+			}
+		}
 	}
 }
 
@@ -199,6 +210,11 @@ void AExplosiveFellowCharacter::SetIsAIControlled(bool NewValue)
 bool AExplosiveFellowCharacter::GetIsInsideBomb()
 {
 	return bIsInsideBomb;
+}
+
+void AExplosiveFellowCharacter::SetOriginatingSpectatorPawn(AEFSpectatorCPP* NewPawn)
+{
+	OriginatingSpectatorPawn = NewPawn;
 }
 
 void AExplosiveFellowCharacter::LocalOnActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)

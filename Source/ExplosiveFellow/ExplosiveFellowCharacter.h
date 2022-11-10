@@ -8,6 +8,7 @@
 #include "EFAbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "EFCustomHealthReactionInterface.h"
+#include "EFSpectatorCPP.h"
 #include "ExplosiveFellowCharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -40,6 +41,8 @@ public:
 	/** GAS Component */
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 
+
+
 	virtual void InitializeAttributes();
 	virtual void InitializeAbilities();
 	virtual void SetupAbilitySystemInputBinds(UInputComponent* PlayerInputComponent);
@@ -62,8 +65,12 @@ public:
 
 	bool GetIsInsideBomb();
 
+	UFUNCTION(BlueprintCallable)
+	void SetOriginatingSpectatorPawn(AEFSpectatorCPP* NewPawn);
 
 private:
+	AEFSpectatorCPP* OriginatingSpectatorPawn;
+
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* TopDownCameraComponent;

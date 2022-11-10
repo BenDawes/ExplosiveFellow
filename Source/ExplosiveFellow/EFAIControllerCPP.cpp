@@ -2,6 +2,7 @@
 
 
 #include "EFAIControllerCPP.h"
+#include "ExplosiveFellowCharacter.h"
 #include "EFBomb.h"
 #include "EFBoxCPP.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -42,8 +43,7 @@ void AEFAIControllerCPP::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-
-	if (PossessedCharacter != nullptr && PossessedCharacter->GetCharacterMovement()->GetLastUpdateVelocity().SizeSquared() < 1.f)
+	if (PossessedCharacter.IsValid() && PossessedCharacter->GetCharacterMovement()->GetLastUpdateVelocity().SizeSquared() < 1.f)
 	{
 		UpdatePerception();
 	}
@@ -67,7 +67,7 @@ void AEFAIControllerCPP::OnPossess(APawn* NewPawn)
 {
 	Super::OnPossess(NewPawn);
 
-	PossessedCharacter = Cast<AExplosiveFellowCharacter>(NewPawn);
+	PossessedCharacter = MakeWeakObjectPtr(Cast<AExplosiveFellowCharacter>(NewPawn));
 }
 
 void AEFAIControllerCPP::OnPerceptionUpdated(const TArray<AActor*>& Actors)
@@ -82,7 +82,7 @@ void AEFAIControllerCPP::OnLastObservedBombExplode()
 
 void AEFAIControllerCPP::UpdatePerception()
 {
-	if (PossessedCharacter == nullptr)
+	if (!PossessedCharacter.IsValid())
 	{
 		return;
 	}
@@ -105,21 +105,20 @@ void AEFAIControllerCPP::UpdatePerception()
 	if (PossessedCharacter != nullptr)
 	{
 		PerceptionComponent->GetCurrentlyPerceivedActors(PerceptionComponent->GetDominantSense(), AllPerceivedActors);
-		DestructibleVisibleActors = AllPerceivedActors.FilterByPredicate([](AActor* Actor) -> bool { return Cast<AEFBoxCPP>(Actor) != nullptr; });
+		auto DestructibleVisibleActors = AllPerceivedActors.FilterByPredicate([](AActor* Actor) -> bool { return (Cast<AEFBoxCPP>(Actor) != nullptr) || (Cast<AExplosiveFellowCharacter>(Actor) != nullptr); });
 		if (DestructibleVisibleActors.Num() > 0)
 		{
 			auto LocalPossessedCharacter = PossessedCharacter;
-			auto NearByCandidates = DestructibleVisibleActors.FilterByPredicate([LocalPossessedCharacter](AActor* Actor) -> bool { return Actor->GetDistanceTo(LocalPossessedCharacter) < 200; });
+			auto NearByCandidates = DestructibleVisibleActors.FilterByPredicate([LocalPossessedCharacter](AActor* Actor) -> bool { return Actor->GetDistanceTo(LocalPossessedCharacter.Get()) < 190; });
 			FVector LookVector = PossessedCharacter->GetActorRotation().RotateVector(FVector::RightVector);
 			LookVector.Normalize();
 			auto VaguelyFacingCandidates = NearByCandidates.FilterByPredicate([LookVector, LocalPossessedCharacter](AActor* Actor) -> bool {
 				auto VectorToCandidate = (Actor->GetActorLocation() - LocalPossessedCharacter->GetActorLocation());
 				VectorToCandidate.Normalize();
 				return FVector::DotProduct(VectorToCandidate, LookVector) > .25;
-				});
+			});
 			if (VaguelyFacingCandidates.Num() > 0)
 			{
-				// UE_LOG(LogTemp, Log, TEXT("Facing a nearby visible destructible object"));
 				AIBlackboard->SetValueAsBool(DestructibleObstacleInWayKey, true);
 			}
 			else

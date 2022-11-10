@@ -45,10 +45,8 @@ private:
 	FName DestructibleObstacleInWayKey = FName("DestructibleObstacleInWay");
 	FName LastObservedBombExplodedKey = FName("HasLastObservedBombExploded");
 
-	AExplosiveFellowCharacter* PossessedCharacter;
+	TWeakObjectPtr<AExplosiveFellowCharacter> PossessedCharacter;
 	
-	TArray<AActor*> DestructibleVisibleActors;
-
 	void UpdatePerception();
 	UFUNCTION()
 	void OnLastObservedBombExplode();
