@@ -1,0 +1,7 @@
+PickUpName,SpawnWeight
+EFPickUp_Heal,2
+EFPickUp_IncreaseMaxBombs,4
+EFPickUp_IncreaseBombDamage,2
+EFPickUp_IncreaseBombRadius,7
+EFPickUp_NextBombPenetrates,1
+EFPickUp_TemporarySpeedBoost,6

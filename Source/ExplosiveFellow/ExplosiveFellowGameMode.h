@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include <Memory>
 #include "GameFramework/GameModeBase.h"
+#include "EFPickUpProvider.h"
 #include "ExplosiveFellowGameMode.generated.h"
 
 UCLASS(minimalapi)
@@ -13,10 +15,13 @@ class AExplosiveFellowGameMode : public AGameModeBase
 
 public:
 	AExplosiveFellowGameMode();
+	virtual void BeginPlay() override;
 
-	// TODO ChoosePlayerStart currently picks a random unoccupied start. Is that sufficient? If not, override.
-	
-	// void HandleStartingNewPlayer(APlayerController* NewPlayer);
 	void HandleStartingNewPlayer(APlayerController* NewPlayer);
+
+	AEFPickUpProvider* GetPickUpProvider();
+
+protected:
+	AEFPickUpProvider* PickUpProvider;
 };
 

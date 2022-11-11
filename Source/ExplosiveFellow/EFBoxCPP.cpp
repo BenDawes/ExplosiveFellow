@@ -1,9 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "EFPickUpProvider.h"
 #include "EFBoxCPP.h"
 #include "EFAttributeSet.h"
 #include "EFAbilitySystemComponent.h"
+#include "ExplosiveFellowGameMode.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
 
@@ -29,7 +31,6 @@ AEFBoxCPP::AEFBoxCPP()
 
 	BoxStimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("AISense_BoxStimulusSource");
 	BoxStimulusSource->bAutoRegister = true;
-
 }
 
 void AEFBoxCPP::PostInitializeComponents()
@@ -64,6 +65,17 @@ void AEFBoxCPP::OnHealthChange(float NewHealth)
 	if (NewHealth < 0.01f)
 	{
 		// UE_LOG(LogTemp, Log, TEXT("Destroying a box"));
+		AExplosiveFellowGameMode* GameMode = GetWorld()->GetAuthGameMode<AExplosiveFellowGameMode>();
+		if (GameMode != nullptr)
+		{
+			if (FMath::RandRange(0, 100) < 25) {
+				FActorSpawnParameters SpawnInfo;
+				SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+				auto Provider = GameMode->GetPickUpProvider();
+				TSubclassOf<AEFPickUpCPP> ChosenPickUp = Provider->GetRandomPickUpClass();
+				GetWorld()->SpawnActor<AEFPickUpCPP>(ChosenPickUp, GetActorLocation(), FRotator::ZeroRotator, SpawnInfo);
+			}
+		}
 		Destroy();
 	}
 }

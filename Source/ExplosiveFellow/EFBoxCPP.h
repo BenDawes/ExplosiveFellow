@@ -15,7 +15,6 @@ UCLASS()
 class EXPLOSIVEFELLOW_API AEFBoxCPP : public AActor, public IAbilitySystemInterface, public IEFCustomHealthReactionInterface
 {
 	GENERATED_BODY()
-	
 public:	
 	// Sets default values for this actor's properties
 	AEFBoxCPP();

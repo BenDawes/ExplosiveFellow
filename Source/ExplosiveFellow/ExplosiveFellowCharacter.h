@@ -9,6 +9,7 @@
 #include "AbilitySystemInterface.h"
 #include "EFCustomHealthReactionInterface.h"
 #include "EFSpectatorCPP.h"
+#include <GameplayEffectTypes.h>
 #include "ExplosiveFellowCharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -41,8 +42,7 @@ public:
 	/** GAS Component */
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 
-	UFUNCTION()
-	virtual void OnActiveGameplayEffectAddedCallback(UAbilitySystemComponent* Target, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle);
+	virtual void MaxSpeedChanged(const FOnAttributeChangeData& Data);
 	virtual void InitializeAttributes();
 	virtual void InitializeAbilities();
 	virtual void SetupAbilitySystemInputBinds(UInputComponent* PlayerInputComponent);

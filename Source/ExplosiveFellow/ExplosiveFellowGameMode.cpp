@@ -1,9 +1,12 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "ExplosiveFellowGameMode.h"
+#include "EFPickUpProvider.h"
 #include "ExplosiveFellowPlayerController.h"
 #include "ExplosiveFellowCharacter.h"
+#include "Templates/SharedPointer.h"
 #include "UObject/ConstructorHelpers.h"
+#include <memory>
 
 AExplosiveFellowGameMode::AExplosiveFellowGameMode()
 {
@@ -18,7 +21,20 @@ AExplosiveFellowGameMode::AExplosiveFellowGameMode()
 	}
 }
 
+
+void AExplosiveFellowGameMode::BeginPlay()
+{
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	PickUpProvider = GetWorld()->SpawnActor<AEFPickUpProvider>(AEFPickUpProvider::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnInfo);
+}
+
 void AExplosiveFellowGameMode::HandleStartingNewPlayer(APlayerController* NewPlayer)
 {
 	Super::HandleStartingNewPlayer(NewPlayer);
+}
+
+AEFPickUpProvider* AExplosiveFellowGameMode::GetPickUpProvider()
+{
+	return PickUpProvider;
 }

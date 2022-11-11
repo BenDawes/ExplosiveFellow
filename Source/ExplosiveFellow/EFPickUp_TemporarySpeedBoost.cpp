@@ -11,5 +11,5 @@ AEFPickUp_TemporarySpeedBoost::AEFPickUp_TemporarySpeedBoost()
 		EffectClass = EffectClassFinder.Class;
 	}
 	EffectAmountTagName = FName("EffectMagnitude.SpeedMultiplier");
-	Amount = 5.f;
+	Amount = 10.f;
 }

@@ -82,8 +82,9 @@ void AExplosiveFellowCharacter::BeginPlay()
 	OnActorBeginOverlap.AddDynamic(this, &AExplosiveFellowCharacter::LocalOnActorBeginOverlap);
 	OnActorEndOverlap.AddDynamic(this, &AExplosiveFellowCharacter::LocalOnActorEndOverlap);
 
+	MoveSpeed = AttributeSet->GetMaxSpeed();
 	GetCharacterMovement()->MaxWalkSpeed = AttributeSet->GetMaxSpeed();
-	AbilitySystemComponent->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(this, &AExplosiveFellowCharacter::OnActiveGameplayEffectAddedCallback);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetMaxSpeedAttribute()).AddUObject(this, &AExplosiveFellowCharacter::MaxSpeedChanged);
 }
 
 void AExplosiveFellowCharacter::Tick(float DeltaSeconds)
@@ -244,26 +245,8 @@ void AExplosiveFellowCharacter::LocalOnActorEndOverlap(AActor* OverlappedActor, 
 
 }
 
-void AExplosiveFellowCharacter::OnActiveGameplayEffectAddedCallback(UAbilitySystemComponent* Target, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle)
+void AExplosiveFellowCharacter::MaxSpeedChanged(const FOnAttributeChangeData& Data)
 {
-	auto LocalAttributeSet = AttributeSet;
-	auto SpeedModifier = SpecApplied.GetModifiedAttribute(LocalAttributeSet->GetMaxSpeedAttribute());
-	UGameplayEffect const* EffectDef = AbilitySystemComponent->GetGameplayEffectDefForHandle(ActiveHandle);
-	if (SpeedModifier != nullptr)
-	{
-		const FGameplayModifierInfo* EffectDefMetaData = EffectDef->Modifiers.FindByPredicate([LocalAttributeSet](FGameplayModifierInfo Info) -> bool { return Info.Attribute == LocalAttributeSet->GetMaxSpeedAttribute(); });
-		if (EffectDefMetaData->ModifierOp == EGameplayModOp::Additive)
-		{
-			GetCharacterMovement()->MaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed + SpeedModifier->TotalMagnitude;
-		}
-		else if (EffectDefMetaData->ModifierOp == EGameplayModOp::Multiplicitive)
-		{
-			GetCharacterMovement()->MaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed * SpeedModifier->TotalMagnitude;
-		}
-		else if (EffectDefMetaData->ModifierOp == EGameplayModOp::Override)
-		{
-			GetCharacterMovement()->MaxWalkSpeed = SpeedModifier->TotalMagnitude;
-		}
-	}
-
+	GetCharacterMovement()->MaxWalkSpeed = Data.NewValue;
+	MoveSpeed = Data.NewValue * 100;
 }
