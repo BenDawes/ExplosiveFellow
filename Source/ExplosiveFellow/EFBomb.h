@@ -57,6 +57,9 @@ public:
 	void SetIsPenetrating(bool NewIsPenetrating);
 
 	UFUNCTION(BlueprintNativeEvent)
+	void OnShowIndicator();
+
+	UFUNCTION(BlueprintNativeEvent)
 	void OnExplode();
 	virtual void OnExplode_Implementation();
 
@@ -84,6 +87,7 @@ public:
 
 private:
 	FTimerHandle FuseTimerHandle;
+	FTimerHandle ShowIndicatorTimerHandle;
 
 	bool bIsSolid = false;
 
@@ -92,4 +96,6 @@ private:
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
 	static bool IsGASActor(AActor* Actor);
+
+	TSubclassOf<AActor> AExplosionIndicator;
 };

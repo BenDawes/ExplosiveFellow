@@ -19,6 +19,12 @@ AEFBomb::AEFBomb()
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	SetRootComponent(StaticMesh);
 
+	static ConstructorHelpers::FClassFinder<AActor> ExplosionIndicatorFinder(TEXT("/Game/TopDownCPP/Blueprints/ExplosionIndicator"));
+	if (ExplosionIndicatorFinder.Succeeded())
+	{
+		AExplosionIndicator = ExplosionIndicatorFinder.Class;
+	}
+
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere'"));
 	if (MeshAsset.Succeeded())
 	{
@@ -88,6 +94,7 @@ void AEFBomb::StartFuse()
 {
 	if (UWorld* World = GetWorld()) {
 		World->GetTimerManager().SetTimer(FuseTimerHandle, this, &AEFBomb::OnExplode, FuseTime, false);
+		World->GetTimerManager().SetTimer(ShowIndicatorTimerHandle, this, &AEFBomb::OnShowIndicator, FuseTime-0.2f, false);
 	}
 }
 
@@ -111,6 +118,14 @@ void AEFBomb::SetIsPenetrating(bool NewIsPenetrating)
 	bIsPenetrating = NewIsPenetrating;
 }
 
+void AEFBomb::OnShowIndicator_Implementation()
+{
+	if (UWorld* World = GetWorld()) {
+		auto Indicator = World->SpawnActor<AActor>(AExplosionIndicator, GetActorLocation(), FRotator::ZeroRotator);
+		Indicator->SetActorScale3D(FVector(ExplosionRadius/50.f, ExplosionRadius/50.f, 1.f));
+	}
+}
+
 void AEFBomb::OnExplode_Implementation()
 {
 	if (bHasExploded) {
@@ -118,6 +133,8 @@ void AEFBomb::OnExplode_Implementation()
 	}
 	bHasExploded = true;
 	if (UWorld* World = GetWorld()) {
+		World->GetTimerManager().ClearTimer(FuseTimerHandle);
+		World->GetTimerManager().ClearTimer(ShowIndicatorTimerHandle);
 		StaticMesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
 		StaticMesh->SetCanEverAffectNavigation(false);
 		TArray<struct FOverlapResult> OutOverlaps;
