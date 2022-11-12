@@ -19,6 +19,12 @@ AExplosiveFellowGameMode::AExplosiveFellowGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> PickUpDataTableFinder(TEXT("DataTable'/Game/TopDownCPP/Blueprints/PickUpSpawnTable.PickUpSpawnTable'"));
+	if (PickUpDataTableFinder.Succeeded())
+	{
+		PickUpDataTable = PickUpDataTableFinder.Object;
+	}
 }
 
 
@@ -27,6 +33,7 @@ void AExplosiveFellowGameMode::BeginPlay()
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	PickUpProvider = GetWorld()->SpawnActor<AEFPickUpProvider>(AEFPickUpProvider::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnInfo);
+	PickUpProvider->GenerateFromDataTable(PickUpDataTable);
 }
 
 void AExplosiveFellowGameMode::HandleStartingNewPlayer(APlayerController* NewPlayer)

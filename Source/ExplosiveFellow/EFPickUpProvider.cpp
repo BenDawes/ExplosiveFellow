@@ -2,33 +2,47 @@
 
 
 #include "EFPickUpProvider.h"
+#include "FWeightedAssetRow.h"
 #include "EFPickUpCPP.h"
 
 AEFPickUpProvider::AEFPickUpProvider()
 {
-	static ConstructorHelpers::FClassFinder<AEFPickUpCPP> HealAsset(TEXT("Class'/Script/ExplosiveFellow.EFPickUp_Heal'"));
-	static ConstructorHelpers::FClassFinder<AEFPickUpCPP> SpeedBoostAsset(TEXT("Class'/Script/ExplosiveFellow.EFPickUp_TemporarySpeedBoost'"));
-	static ConstructorHelpers::FClassFinder<AEFPickUpCPP> MaxBombsAsset(TEXT("Class'/Script/ExplosiveFellow.EFPickUp_IncreaseMaxBombs'"));
-	static ConstructorHelpers::FClassFinder<AEFPickUpCPP> BombDamageAsset(TEXT("Class'/Script/ExplosiveFellow.EFPickUp_IncreaseBombDamage'"));
-	static ConstructorHelpers::FClassFinder<AEFPickUpCPP> BombSizeAsset(TEXT("Class'/Script/ExplosiveFellow.EFPickUp_IncreaseBombRadius'"));
-	static ConstructorHelpers::FClassFinder<AEFPickUpCPP> PenetratesAsset(TEXT("Class'/Script/ExplosiveFellow.EFPickUp_NextBombPenetrates'"));
-
-	ConstructorHelpers::FClassFinder<AEFPickUpCPP> AssetsArray[] = {
-		HealAsset, SpeedBoostAsset, MaxBombsAsset, BombDamageAsset, BombSizeAsset, PenetratesAsset
-	};
-	for (auto Finder : AssetsArray)
-	{
-		if (Finder.Succeeded()) {
-			PickupClasses.Add(Finder.Class);
-		}
-	}
 }
 
 TSubclassOf<AEFPickUpCPP> AEFPickUpProvider::GetRandomPickUpClass()
 {
-	if (PickupClasses.Num() == 0)
+	if (PickUpClasses.Num() == 0)
 	{
 		return nullptr;
 	}
-	return PickupClasses[FMath::RandRange(0, PickupClasses.Num() - 1)];
+	float UniformRand = FMath::FRand();
+	float ScaledRand = UniformRand * Max;
+	float Counter = 0;
+	for (int i = 0; i < PickUpWeights.Num(); i++)
+	{
+		Counter += PickUpWeights[i];
+		if (Counter > ScaledRand)
+		{
+			return PickUpClasses[i];
+		}
+	}
+	return PickUpClasses[FMath::RandRange(0, PickUpClasses.Num() - 1)];
+}
+
+void AEFPickUpProvider::GenerateFromDataTable(UDataTable* Table)
+{
+	for (FName RowName : Table->GetRowNames())
+	{
+		FWeightedAssetRow* Row = Table->FindRow<FWeightedAssetRow>(RowName, TEXT("PickUp Provider Row Extraction"));
+		if (Row->Actor->IsChildOf(AEFPickUpCPP::StaticClass()))
+		{
+			PickUpClasses.Add((TSubclassOf<AEFPickUpCPP>)Row->Actor);
+			PickUpWeights.Add(Row->Weight);
+		}
+	}
+	Max = 0;
+	for (float Weight : PickUpWeights)
+	{
+		Max += Weight;
+	}
 }

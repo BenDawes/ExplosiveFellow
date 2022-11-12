@@ -16,5 +16,8 @@ class EXPLOSIVEFELLOW_API AEFPickUpProvider : public AActor
 public:
 	AEFPickUpProvider();
 	TSubclassOf<AEFPickUpCPP> GetRandomPickUpClass();
-	TArray<TSubclassOf<AEFPickUpCPP>> PickupClasses;
+	void GenerateFromDataTable(UDataTable* Table);
+	TArray<TSubclassOf<AEFPickUpCPP>> PickUpClasses;
+	TArray<float> PickUpWeights;
+	float Max;
 };

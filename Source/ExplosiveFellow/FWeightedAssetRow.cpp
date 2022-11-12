@@ -2,11 +2,3 @@
 
 
 #include "FWeightedAssetRow.h"
-
-FWeightedAssetRow::FWeightedAssetRow()
-{
-}
-
-FWeightedAssetRow::~FWeightedAssetRow()
-{
-}

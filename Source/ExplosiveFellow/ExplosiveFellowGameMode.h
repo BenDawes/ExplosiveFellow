@@ -23,5 +23,6 @@ public:
 
 protected:
 	AEFPickUpProvider* PickUpProvider;
+	UDataTable* PickUpDataTable;
 };
 

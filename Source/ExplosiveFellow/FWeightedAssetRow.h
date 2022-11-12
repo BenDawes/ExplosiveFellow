@@ -2,14 +2,23 @@
 
 #pragma once
 
+#include "Engine/DataTable.h"
 #include "CoreMinimal.h"
+#include "FWeightedAssetRow.generated.h"
 
 /**
- * 
+ 
  */
-class EXPLOSIVEFELLOW_API FWeightedAssetRow
+USTRUCT(BlueprintType)
+struct EXPLOSIVEFELLOW_API FWeightedAssetRow : public FTableRowBase
 {
+    GENERATED_USTRUCT_BODY()
 public:
-	FWeightedAssetRow();
-	~FWeightedAssetRow();
+    /** montage **/
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<AActor> Actor;
+
+    /** description **/
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float Weight;
 };
