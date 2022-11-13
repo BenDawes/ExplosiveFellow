@@ -19,6 +19,7 @@
 #include "EFAIControllerCPP.h"
 #include "EFBomb.h"
 #include <GameplayEffectTypes.h>
+#include "Blueprint/UserWidget.h"
 #include "ExplosiveFellow.h"
 
 const FName AExplosiveFellowCharacter::MoveForwardBinding("MoveForward");
@@ -49,7 +50,7 @@ AExplosiveFellowCharacter::AExplosiveFellowCharacter()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when character does
-	CameraBoom->TargetArmLength = 800.f;
+	CameraBoom->TargetArmLength = 1500.f;
 	CameraBoom->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
@@ -85,6 +86,11 @@ void AExplosiveFellowCharacter::BeginPlay()
 	MoveSpeed = AttributeSet->GetMaxSpeed();
 	GetCharacterMovement()->MaxWalkSpeed = AttributeSet->GetMaxSpeed();
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetMaxSpeedAttribute()).AddUObject(this, &AExplosiveFellowCharacter::MaxSpeedChanged);
+}
+
+void AExplosiveFellowCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 }
 
 void AExplosiveFellowCharacter::Tick(float DeltaSeconds)

@@ -2,6 +2,7 @@
 
 
 #include "EFPickUp_NextBombPenetrates.h"
+#include "EFAbilitySystemComponent.h"
 #include "EFGameplayAbility.h"
 #include "EFAbilitySystemComponent.h"
 
@@ -22,5 +23,10 @@ void AEFPickUp_NextBombPenetrates::OnPickUp(AExplosiveFellowCharacter* Receiving
 			FGameplayAbilitySpec(NextBombPenetratesAbility, 1, -1, this)
 		);
 		Destroy();
+	}
+	UEFAbilitySystemComponent* AsEFASC = Cast<UEFAbilitySystemComponent>(ReceivingCharacter->GetAbilitySystemComponent());
+	if (AsEFASC != nullptr)
+	{
+		AsEFASC->GenerateBuffString();
 	}
 }

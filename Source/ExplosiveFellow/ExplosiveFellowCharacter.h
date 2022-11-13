@@ -10,6 +10,7 @@
 #include "EFCustomHealthReactionInterface.h"
 #include "EFSpectatorCPP.h"
 #include <GameplayEffectTypes.h>
+#include "Blueprint/UserWidget.h"
 #include "ExplosiveFellowCharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -32,6 +33,8 @@ public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 	virtual void BeginPlay() override;
+
+	void PostInitializeComponents();
 
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
@@ -96,6 +99,8 @@ private:
 
 	UFUNCTION()
 	virtual void LocalOnActorEndOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	TSubclassOf<UUserWidget> HUDClass;
 
 };
 

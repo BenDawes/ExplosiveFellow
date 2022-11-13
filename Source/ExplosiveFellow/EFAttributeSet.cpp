@@ -62,6 +62,10 @@ void UEFAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, fl
 	{
 		NewValue = FMath::Clamp<float>(NewValue, NewValue, 100);
 	}
+	if (Attribute == GetMaxBombsAttribute())
+	{
+
+	}
 }
 
 void UEFAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)

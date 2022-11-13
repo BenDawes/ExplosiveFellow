@@ -15,6 +15,12 @@ public:
 	AExplosiveFellowPlayerController();
 	virtual void AcknowledgePossession(APawn* NewPawn) override;
 
+private:
+	TSubclassOf<UUserWidget> HUDClass;
+	UUserWidget* PlayerUI;
+
+	UFUNCTION()
+	void OnPlayerDestroy(AActor* Actor);
 };
 
 

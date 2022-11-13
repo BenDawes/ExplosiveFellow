@@ -15,5 +15,5 @@ class EXPLOSIVEFELLOW_API AEFPickUp_TemporarySpeedBoost : public AEFPickUpCPP
 	GENERATED_BODY()
 public:
 	AEFPickUp_TemporarySpeedBoost();
-	
+	virtual void OnPickUp(AExplosiveFellowCharacter* ReceivingCharacter) override;
 };

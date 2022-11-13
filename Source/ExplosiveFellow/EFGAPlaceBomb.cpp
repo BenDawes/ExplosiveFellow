@@ -2,13 +2,14 @@
 
 
 #include "EFGAPlaceBomb.h"
+#include "Abilities/GameplayAbilityTypes.h"
 #include "AbilitySystemComponent.h"
-#include "ExplosiveFellowCharacter.h"
-#include "EFAttributeSet.h"
 #include "AttributeSet.h"
+#include "ExplosiveFellowCharacter.h"
+#include "EFAbilitySystemComponent.h"
+#include "EFAttributeSet.h"
 #include "EFGameplayAbility.h"
 #include <ExplosiveFellow/ExplosiveFellow.h>
-#include "Abilities/GameplayAbilityTypes.h"
 #include "EFBomb.h"
 
 
@@ -68,6 +69,11 @@ void UEFGAPlaceBomb::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 				{
 					Bomb->SetIsPenetrating(true);
 					AsCharacter->GetAbilitySystemComponent()->ClearAbility(NextBombPenetratesSpec->Handle);
+					auto AsEFASC = Cast<UEFAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo());
+					if (AsEFASC != nullptr)
+					{
+						AsEFASC->GenerateBuffString();
+					}
 				}
 
 				const UEFAttributeSet* AttributeSet = ASC->GetSet<UEFAttributeSet>();

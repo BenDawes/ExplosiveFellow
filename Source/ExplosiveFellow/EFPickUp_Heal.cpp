@@ -11,5 +11,5 @@ AEFPickUp_Heal::AEFPickUp_Heal()
 		EffectClass = EffectClassFinder.Class;
 	}
 	EffectAmountTagName = FName("EffectMagnitude.Heal");
-	Amount = 25.f;
+	Amount = .25f;
 }

@@ -12,6 +12,11 @@
 
 AExplosiveFellowPlayerController::AExplosiveFellowPlayerController()
 {
+	static ConstructorHelpers::FClassFinder<UUserWidget> HUDClassFinder(TEXT("/Game/TopDownCPP/UI/HUD"));;
+	if (HUDClassFinder.Succeeded())
+	{
+		HUDClass = HUDClassFinder.Class;
+	}
 }
 
 void AExplosiveFellowPlayerController::AcknowledgePossession(APawn* NewPawn)
@@ -26,4 +31,12 @@ void AExplosiveFellowPlayerController::AcknowledgePossession(APawn* NewPawn)
 
 	AbilitySystemComponent->InitAbilityActorInfo(ControlledCharacter, ControlledCharacter);
 	ControlledCharacter->SetIsAIControlled(false);
+	PlayerUI = CreateWidget(GetWorld(), HUDClass, FName("PlayerHUD"));
+	PlayerUI->AddToViewport();
+	ControlledCharacter->OnDestroyed.AddDynamic(this, &AExplosiveFellowPlayerController::OnPlayerDestroy);
+}
+
+void AExplosiveFellowPlayerController::OnPlayerDestroy(AActor* Actor)
+{
+	PlayerUI->RemoveFromViewport();
 }
