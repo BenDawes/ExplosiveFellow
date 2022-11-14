@@ -11,6 +11,7 @@
 #include "EFGameplayAbility.h"
 #include <ExplosiveFellow/ExplosiveFellow.h>
 #include "EFBomb.h"
+#include "AbilitySystemInterface.h"
 
 
 UEFGAPlaceBomb::UEFGAPlaceBomb() {
@@ -68,11 +69,14 @@ void UEFGAPlaceBomb::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 				if (NextBombPenetratesSpec != nullptr)
 				{
 					Bomb->SetIsPenetrating(true);
-					AsCharacter->GetAbilitySystemComponent()->ClearAbility(NextBombPenetratesSpec->Handle);
-					auto AsEFASC = Cast<UEFAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo());
-					if (AsEFASC != nullptr)
+					if (HasAuthority(&ActivationInfo))
 					{
-						AsEFASC->GenerateBuffString();
+						ASC->ClearAbility(NextBombPenetratesSpec->Handle);
+						auto AsEFASC = Cast<UEFAbilitySystemComponent>(ASC);
+						if (AsEFASC != nullptr)
+						{
+							AsEFASC->GenerateBuffString();
+						}
 					}
 				}
 

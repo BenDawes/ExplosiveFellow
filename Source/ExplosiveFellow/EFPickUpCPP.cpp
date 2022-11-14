@@ -28,6 +28,8 @@ AEFPickUpCPP::AEFPickUpCPP()
 	TriggerCapsule->SetRelativeLocation(FVector(0, 0, 50.f));
 	TriggerCapsule->SetCollisionProfileName(TEXT("Trigger"));
 	TriggerCapsule->SetupAttachment(RootComponent);
+
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned

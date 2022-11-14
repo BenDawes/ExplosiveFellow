@@ -1,12 +1,15 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "ExplosiveFellowGameMode.h"
+#include "EFGameState.h"
 #include "EFPickUpProvider.h"
 #include "ExplosiveFellowPlayerController.h"
 #include "ExplosiveFellowCharacter.h"
 #include "Templates/SharedPointer.h"
 #include "UObject/ConstructorHelpers.h"
+#include "GameFramework/GameStateBase.h"
 #include <memory>
+#include "HAL/PlatformApplicationMisc.h"
 
 AExplosiveFellowGameMode::AExplosiveFellowGameMode()
 {
@@ -20,11 +23,14 @@ AExplosiveFellowGameMode::AExplosiveFellowGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 
+	GameStateClass = AEFGameState::StaticClass();
+
 	static ConstructorHelpers::FObjectFinder<UDataTable> PickUpDataTableFinder(TEXT("DataTable'/Game/TopDownCPP/Blueprints/PickUpSpawnTable.PickUpSpawnTable'"));
 	if (PickUpDataTableFinder.Succeeded())
 	{
 		PickUpDataTable = PickUpDataTableFinder.Object;
 	}
+
 }
 
 
@@ -44,4 +50,9 @@ void AExplosiveFellowGameMode::HandleStartingNewPlayer(APlayerController* NewPla
 AEFPickUpProvider* AExplosiveFellowGameMode::GetPickUpProvider()
 {
 	return PickUpProvider;
+}
+
+void AExplosiveFellowGameMode::CopyToClipboard(FString StrToCopy)
+{
+	FPlatformApplicationMisc::ClipboardCopy(*StrToCopy);
 }

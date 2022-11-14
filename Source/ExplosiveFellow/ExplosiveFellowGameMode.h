@@ -21,6 +21,10 @@ public:
 
 	AEFPickUpProvider* GetPickUpProvider();
 
+	UFUNCTION(BlueprintCallable)
+	void CopyToClipboard(FString StrToCopy);
+
+
 protected:
 	AEFPickUpProvider* PickUpProvider;
 	UDataTable* PickUpDataTable;

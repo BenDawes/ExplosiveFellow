@@ -6,6 +6,8 @@
 #include "EFGAPlaceBomb.h"
 #include "EFAttributeSet.h"
 
+#include "Net/UnrealNetwork.h"
+
 UEFAbilitySystemComponent::UEFAbilitySystemComponent()
 {
 	static ConstructorHelpers::FClassFinder<UEFGameplayAbility> NextBombPenetratesClassFinder(TEXT("/Game/TopDownCPP/GAS/GA_NextBombPenetrates"));;
@@ -88,4 +90,11 @@ void UEFAbilitySystemComponent::GenerateBuffString()
 		}
 	}
 	BuffString = FString::Join(BuffStrings, TEXT(", "));
+}
+
+void UEFAbilitySystemComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UEFAbilitySystemComponent, BuffString);
 }

@@ -1,0 +1,13 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-AdvancedSteamSessions-0074.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\dawes\Projects\ExplosiveFellow\Intermediate\Build\Win64\ExplosiveFellowEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"C:\Users\dawes\Projects\ExplosiveFellow\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp.obj"
+"C:\Users\dawes\Projects\ExplosiveFellow\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.gen.cpp.obj"
+"C:\Users\dawes\Projects\ExplosiveFellow\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\Default.rc2.res"
+/OUT:"C:\Users\dawes\Projects\ExplosiveFellow\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSteamSessions\UE4Editor-AdvancedSteamSessions-0074.lib"

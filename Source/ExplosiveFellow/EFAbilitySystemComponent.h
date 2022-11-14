@@ -26,13 +26,15 @@ public:
 	bool AbilitiesHaveBeenBound() { return bAbilitiesHaveBeenBound; }
 	void GenerateBuffString();
 
-	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
+	UPROPERTY(BlueprintReadOnly, Category = "Gameplay", replicated)
 	FString BuffString;
 
 	void MaxSpeedChanged(const FOnAttributeChangeData& Data);
 
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	UEFGAPlaceBomb* GetPlaceBombAbility();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:
 	bool bAbilitiesHaveBeenInitialized = false;
 	bool bAbilitiesHaveBeenBound = false;
