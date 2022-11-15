@@ -13,6 +13,8 @@ AEFPickUp_TemporarySpeedBoost::AEFPickUp_TemporarySpeedBoost()
 	}
 	EffectAmountTagName = FName("EffectMagnitude.SpeedMultiplier");
 	Amount = 10.f;
+	TextureAsset = FSoftObjectPath(TEXT("Texture2D'/Game/TopDownCPP/Sprites/Potions/Half-Blue.Half-Blue'"));
+
 }
 
 

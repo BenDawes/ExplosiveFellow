@@ -10,6 +10,8 @@ AEFPickUp_IncreaseMaxBombs::AEFPickUp_IncreaseMaxBombs()
 	{
 		EffectClass = EffectClassFinder.Class;
 	}
+	TextureAsset = FSoftObjectPath(TEXT("Texture2D'/Game/TopDownCPP/Sprites/Potions/Half-White.Half-White'"));
+
 }
 
 

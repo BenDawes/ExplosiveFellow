@@ -12,4 +12,6 @@ AEFPickUp_IncreaseBombDamage::AEFPickUp_IncreaseBombDamage()
 	}
 	EffectAmountTagName = FName("EffectMagnitude.DamageIncrease");
 	Amount = 1;
+	TextureAsset = FSoftObjectPath(TEXT("Texture2D'/Game/TopDownCPP/Sprites/Potions/Full-Red.Full-Red'"));
+
 }

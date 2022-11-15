@@ -4,6 +4,7 @@
 #include "EFPickUpCPP.h"
 #include "ExplosiveFellowCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Engine/AssetManager.h"
 
 // Sets default values
 AEFPickUpCPP::AEFPickUpCPP()
@@ -14,7 +15,7 @@ AEFPickUpCPP::AEFPickUpCPP()
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	SetRootComponent(StaticMesh);
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
 	if (MeshAsset.Succeeded())
 	{
 		StaticMesh->SetStaticMesh(MeshAsset.Object);
@@ -22,21 +23,49 @@ AEFPickUpCPP::AEFPickUpCPP()
 		StaticMesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
 		StaticMesh->SetCanEverAffectNavigation(false);
 	}
+	StaticMesh->SetRelativeRotation(FRotator::MakeFromEuler(FVector(60,0,90)));
+
+	static ConstructorHelpers::FObjectFinder<UMaterial> MaterialAsset(TEXT("/Game/TopDownCPP/Sprites/Potions/TransparentSpriteMaterial"));
+	
+	if (MaterialAsset.Succeeded())
+	{
+		Material = MaterialAsset.Object;
+	}
+
+	TextureAsset = FSoftObjectPath(TEXT("Texture2D'/Game/TopDownCPP/Sprites/Potions/Half-Black.Half-Black'"));
+
 
 	TriggerCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Collision Capsule"));
 	TriggerCapsule->InitCapsuleSize(50.f, 50.f);
-	TriggerCapsule->SetRelativeLocation(FVector(0, 0, 50.f));
 	TriggerCapsule->SetCollisionProfileName(TEXT("Trigger"));
 	TriggerCapsule->SetupAttachment(RootComponent);
 
 	bReplicates = true;
+
 }
 
 // Called when the game starts or when spawned
 void AEFPickUpCPP::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+}
+void AEFPickUpCPP::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	UMaterialInstanceDynamic* MaterialInstanceDynamic = UMaterialInstanceDynamic::Create(Material, this);
+
+	TSharedPtr<FStreamableHandle> TextureHandle = UAssetManager::Get().GetStreamableManager().RequestSyncLoad(TextureAsset);
+	if (TextureHandle)
+	{
+		auto Asset = TextureHandle->GetLoadedAsset();
+		Texture = Cast<UTexture2D>(Asset);
+		if (Texture)
+		{
+			MaterialInstanceDynamic->SetTextureParameterValue(FName("InputTexture"), Texture);
+		}
+	}
+	StaticMesh->SetMaterial(0, MaterialInstanceDynamic);
 }
 
 void AEFPickUpCPP::PostInitializeComponents()

@@ -73,7 +73,9 @@ void AEFBoxCPP::OnHealthChange(float NewHealth)
 				SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 				auto Provider = GameMode->GetPickUpProvider();
 				TSubclassOf<AEFPickUpCPP> ChosenPickUp = Provider->GetRandomPickUpClass();
-				GetWorld()->SpawnActor<AEFPickUpCPP>(ChosenPickUp, GetActorLocation(), FRotator::ZeroRotator, SpawnInfo);
+				FVector SpawnLocation = GetActorLocation();
+				SpawnLocation.Z += 70;
+				GetWorld()->SpawnActor<AEFPickUpCPP>(ChosenPickUp, SpawnLocation, FRotator::ZeroRotator, SpawnInfo);
 			}
 		}
 		Destroy();

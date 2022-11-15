@@ -30,7 +30,6 @@ AExplosiveFellowGameMode::AExplosiveFellowGameMode()
 	{
 		PickUpDataTable = PickUpDataTableFinder.Object;
 	}
-
 }
 
 

@@ -12,4 +12,6 @@ AEFPickUp_IncreaseBombRadius::AEFPickUp_IncreaseBombRadius()
 	}
 	EffectAmountTagName = FName("EffectMagnitude.RadiusIncrease");
 	Amount = 1;
+	TextureAsset = FSoftObjectPath(TEXT("Texture2D'/Game/TopDownCPP/Sprites/Potions/Half-Orange.Half-Orange'"));
+
 }

@@ -13,6 +13,8 @@ AEFPickUp_NextBombPenetrates::AEFPickUp_NextBombPenetrates()
 	{
 		NextBombPenetratesAbility = AbilityFinder.Class;
 	}
+	TextureAsset = FSoftObjectPath(TEXT("Texture2D'/Game/TopDownCPP/Sprites/Potions/Half-Black.Half-Black'"));
+
 }
 
 void AEFPickUp_NextBombPenetrates::OnPickUp(AExplosiveFellowCharacter* ReceivingCharacter)

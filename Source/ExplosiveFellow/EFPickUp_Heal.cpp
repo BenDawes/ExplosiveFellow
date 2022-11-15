@@ -12,4 +12,5 @@ AEFPickUp_Heal::AEFPickUp_Heal()
 	}
 	EffectAmountTagName = FName("EffectMagnitude.Heal");
 	Amount = .25f;
+	TextureAsset = FSoftObjectPath(TEXT("Texture2D'/Game/TopDownCPP/Sprites/Potions/Half-Red.Half-Red'"));
 }
