@@ -17,10 +17,10 @@ AEFSpectatorCPP::AEFSpectatorCPP()
 void AEFSpectatorCPP::BeginPlay()
 {
 	Super::BeginPlay();
-	APlayerController* Controller = Cast<APlayerController>(GetController());
-	if (Controller != nullptr)
+	APlayerController* AsPlayerController = Cast<APlayerController>(GetController());
+	if (AsPlayerController != nullptr)
 	{
-		Controller->bShowMouseCursor = true;
+		AsPlayerController->bShowMouseCursor = true;
 	}
 }
 
