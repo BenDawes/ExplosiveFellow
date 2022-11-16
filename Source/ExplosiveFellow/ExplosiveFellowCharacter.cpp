@@ -20,6 +20,7 @@
 #include "EFBomb.h"
 #include <GameplayEffectTypes.h>
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 #include "ExplosiveFellow.h"
 
 const FName AExplosiveFellowCharacter::MoveForwardBinding("MoveForward");
@@ -198,6 +199,16 @@ void AExplosiveFellowCharacter::OnHealthChange(float NewHealth)
 {
 	if (NewHealth < 0.01f)
 	{
+		TArray<AActor*> AllCharacters;
+		if (UWorld* World = GetWorld())
+		{
+			UGameplayStatics::GetAllActorsOfClass(World, AExplosiveFellowCharacter::StaticClass(), AllCharacters);
+			if (AllCharacters.Num() == 2)
+			{
+				UGameplayStatics::OpenLevel(World, "MainMenuMap");
+			}
+
+		}
 		if (bIsAIControlled)
 		{
 			Destroy();

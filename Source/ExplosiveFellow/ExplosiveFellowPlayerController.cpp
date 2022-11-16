@@ -25,9 +25,11 @@ void AExplosiveFellowPlayerController::AcknowledgePossession(APawn* NewPawn)
 	AExplosiveFellowCharacter* ControlledCharacter = Cast<AExplosiveFellowCharacter>(GetPawn());
 	if (ControlledCharacter == nullptr)
 	{
+		bShowMouseCursor = true;
 		return;
 	}
 	auto AbilitySystemComponent = ControlledCharacter->GetAbilitySystemComponent();
+	bShowMouseCursor = false;
 
 	AbilitySystemComponent->InitAbilityActorInfo(ControlledCharacter, ControlledCharacter);
 	ControlledCharacter->SetIsAIControlled(false);
