@@ -203,9 +203,9 @@ void AExplosiveFellowCharacter::OnHealthChange(float NewHealth)
 		if (UWorld* World = GetWorld())
 		{
 			UGameplayStatics::GetAllActorsOfClass(World, AExplosiveFellowCharacter::StaticClass(), AllCharacters);
-			if (AllCharacters.Num() == 2)
+			if (AllCharacters.Num() == 2 && HasAuthority())
 			{
-				UGameplayStatics::OpenLevel(World, "MainMenuMap");
+				World->ServerTravel("NetworkConnectionMap");
 			}
 
 		}
